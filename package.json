@@ -1,0 +1,19 @@
+{
+  "author": "Maurice Fonk <npm@naneau.net> (http://naneau.net/)",
+  "name": "gunther",
+  "description": "Gunther is a template/view drop-in for Backbone.js",
+  "version": "0.0.1",
+  "homepage": "http://naneau.net/projects/gunther",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:naneau/gunther.git"
+  },
+  "engines": {
+    "node": "~v0.4.11"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "coffee-script": ">=v1.1.1",
+    "uglify-js": "*"
+  }
+}
