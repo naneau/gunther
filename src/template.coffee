@@ -28,15 +28,13 @@ class Gunther.Template
 
     # Generate children for a DOM element
     @generateChildren: (el, childFn, scope) ->
-        # Do the actual recursion
+        # Do the actual recursion, setting up the scope proper, and passing the parent element
         childResult = childFn.apply scope
-
-        # If the child generator returns a string, we have to append it as a
-        # text element to the current element
+        console.log childResult
+        # If the child generator returns a string, we have to append it as a text element to the current element
         el.append childResult if typeof childResult isnt 'object'
 
-        # If we get a bound property, we set up the initial value, as well as a
-        # change watcher
+        # If we get a bound property, we set up the initial value, as well as a change watcher
         if childResult instanceof BoundProperty
             el.html childResult.getValue()
             childResult.bind 'change', (newVal) ->
@@ -108,6 +106,17 @@ class Gunther.Template
     # Additionally you can provide a "value" function, that gets called to
     # create the new value
     bind: (args...) -> new BoundProperty args...
+
+    # Set up a subview for every item in the collection
+    #
+    # This ensures that only one view/template is rendered for every item,
+    # where the view can manage a DOM element which is unchanging (the view
+    # does not get re-rendered when elements are added to/removed from the
+    # collection)
+    itemSubView: (collection, key, template) -> new ItemSubView
+        model: collection
+        key: key
+        template: template
 
 # Set up all HTML elements as functions
 for htmlElement in Gunther.HTML.elements
