@@ -2,9 +2,12 @@
 exec = (require 'child_process').exec
 saiga = require 'saiga'
 
+# Files to build, in order
+buildOrder = ['root.coffee', 'html.coffee', 'boundProperty.coffee', 'template.coffee']
+
 # Build Gunther
 task "build", "Build Gunther", () ->
-    exec "./node_modules/coffee-script/bin/coffee -o lib -c src", (error, stdout, stderr) ->
+    exec "./node_modules/coffee-script/bin/coffee -o lib -j gunther -c ./src/#{buildOrder.join ' ./src/'}", (error, stdout, stderr) ->
         if not error?
             console.log 'Gunther compiled'
             invoke 'minify'

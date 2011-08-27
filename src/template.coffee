@@ -1,6 +1,3 @@
-# Set up the global "namespace" for Gunther to live in
-Gunther = {}
-
 # Main template class
 class Gunther.Template
 
@@ -69,9 +66,15 @@ class Gunther.Template
         # Do we remove them from root afterwards?
         #@root.remove()
 
-    # Render
+    # Render into an element
+    #
+    # Will return a Backbone.View that can be used/modified to your wishes
     renderInto: (el, args...) ->
         el.append child for child in @render args...
+
+        # Return a view
+        new Backbone.View
+            el: el
 
     # Create a child to @current, recurse and add children to it, etc.
     createChild: (tagName, args...) ->
@@ -100,70 +103,17 @@ class Gunther.Template
         null
 
     # Bind to a property of a model
+    #
+    # When the property changes the contents are refreshed with the new value.
+    # Additionally you can provide a "value" function, that gets called to
+    # create the new value
     bind: (args...) -> new BoundProperty args...
-
-# HTML information
-class Gunther.HTML
-
-    # All HTML5 elements :)
-    # For each element in this set a function will be created on Gunther's prototype
-    @elements = ["a", "abbr", "address", "article", "aside", "audio", "b",
-        "bdi", "bdo", "blockquote", "body", "button", "canvas", "caption", "cite",
-        "code", "colgroup", "datalist", "dd", "del", "details", "dfn", "div", "dl",
-        "dt", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1",
-        "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i",
-        "iframe", "ins", "kbd", "label", "legend", "li", "map", "mark", "menu",
-        "meter", "nav", "noscript", "object", "ol", "optgroup", "option", "output",
-        "p", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script",
-        "section", "select", "small", "span", "strong", "style", "sub", "summary",
-        "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time",
-        "title", "tr", "u", "ul", "video", "area", "base", "br", "col", "command",
-        "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source",
-        "track", "wbr", "applet", "acronym", "bgsound", "dir", "frameset",
-        "noframes", "isindex", "listing", "nextid", "noembed", "plaintext", "rb",
-        "strike", "xmp", "big", "blink", "center", "font", "marquee", "multicol",
-        "nobr", "spacer", "tt", "basefont", "frame"]
-
-    # List of default HTML Events
-    # should be easy enough to extend with custom events
-    @eventNames: ['load', 'unload', 'blur', 'change', 'focus', 'reset',
-        'select', 'submit', 'abort', 'keydown', 'keyup', 'keypress', 'click',
-        'dblclick', 'mousedown', 'mouseout', 'mouseover', 'mouseup']
 
 # Set up all HTML elements as functions
 for htmlElement in Gunther.HTML.elements
     do (htmlElement) -> # gotta love for...do :)
         Gunther.Template::[htmlElement] = (args...) ->
             @createChild htmlElement, args...
-
-# Bound property, a simple wrapper around the events the Backbone models fire
-class BoundProperty
-
-    # Constructor
-    constructor: (@model, @propertyNames, @valueGenerator) ->
-
-        # Default the value generator to a "get" of the property if we can
-        if not @valueGenerator? and typeof @propertyNames is 'string'
-            @valueGenerator = () => @model.get @propertyNames[0]
-
-        # Make sure we have an array of property names (a string can be passed)
-        @propertyNames = [].concat @propertyNames
-
-        # Set up a listener for all the property names we need to watch
-        for propertyName in @propertyNames
-            @model.bind "change:#{propertyName}", () =>
-                @trigger 'change', @getValue()
-
-    # Get the value
-    getValue: () ->
-        generatedValue = @valueGenerator()
-        if generatedValue instanceof Gunther.Template
-            generatedValue.render()
-        else
-            generatedValue
-
-# BoundProperty is an EventEmitter... (why can't I just extend from Backbone.Events?)
-_.extend BoundProperty.prototype, Backbone.Events
 
 # Export Gunther to the global scope
 window.Gunther = Gunther
