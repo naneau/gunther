@@ -16,7 +16,11 @@ task "build", "Build Gunther", () ->
 
 # Minify
 task "minify", "Minify Gunther's js", () ->
-    exec "./node_modules/uglify-js/bin/uglifyjs -o ./lib/gunther-min.js ./lib/gunther.js"
+    exec "./node_modules/uglify-js/bin/uglifyjs -o ./lib/gunther-min.js ./lib/gunther.js", (error, stdout, stderr) ->
+        if not error?
+            console.log 'Gunther minified'
+        else
+            console.log "Could not minify: #{error}"
 
 # Watch for changes
 task "watch", "Watch for changes and recompile", () ->
