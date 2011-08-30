@@ -1,4 +1,6 @@
 # Subview for items
+#
+# Will maintain its element with a list of items that come from a collection. Adding new elements and removing old ones
 class ItemSubView extends Backbone.View
 
     # Constructor
@@ -17,7 +19,6 @@ class ItemSubView extends Backbone.View
     # Init the view in the item
     initItem: (item) ->
         item[@key] = @generator item
-        console.log item[@key]
 
     # Render a single item
     renderItem: (item) ->
