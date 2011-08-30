@@ -16,6 +16,11 @@ class ItemSubView extends Backbone.View
         # Init the items
         @model.each (item) => @initItem item
 
+        # When an item is added, init and render it
+        @model.bind 'add', (item) =>
+            @initItem item
+            @renderItem item
+
     # Init the view in the item
     initItem: (item) ->
         item[@key] = @generator item
