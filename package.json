@@ -2,7 +2,7 @@
   "author": "Maurice Fonk <npm@naneau.net> (http://naneau.net/)",
   "name": "gunther",
   "description": "Gunther is a template/view drop-in for Backbone.js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "http://naneau.net/projects/gunther",
   "repository": {
     "type": "git",
