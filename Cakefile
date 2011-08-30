@@ -3,7 +3,7 @@ exec = (require 'child_process').exec
 saiga = require 'saiga'
 
 # Files to build, in order
-buildOrder = ['root.coffee', 'html.coffee', 'boundProperty.coffee', 'template.coffee']
+buildOrder = ['root.coffee', 'html.coffee', 'boundProperty.coffee', 'itemSubView.coffee', 'template.coffee']
 
 # Build Gunther
 task "build", "Build Gunther", () ->
