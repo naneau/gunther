@@ -30,7 +30,7 @@ class Gunther.Template
     @generateChildren: (el, childFn, scope) ->
         # Do the actual recursion, setting up the scope proper, and passing the parent element
         childResult = childFn.apply scope
-        console.log childResult
+
         # If the child generator returns a string, we have to append it as a text element to the current element
         el.append childResult if typeof childResult isnt 'object'
 
