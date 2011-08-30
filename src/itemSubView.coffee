@@ -21,6 +21,13 @@ class ItemSubView extends Backbone.View
             @initItem item
             @renderItem item
 
+        # When an item is removed, remove the element, or the view
+        @model.bind 'remove', (item) =>
+            if item[@key] instanceof Backbone.View
+                item[@key].remove()
+            else
+                item[@elementKey].remove()
+
     # Init the view in the item
     initItem: (item) ->
         item[@key] = @generator item
