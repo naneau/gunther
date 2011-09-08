@@ -1,6 +1,9 @@
 # Main template class
 class Gunther.Template
 
+    # additional DOM parsers, can be used to set up plugins, etc.
+    @domParsers = []
+
     # Create a DOM element
     @createHtmlElement: (tagName) -> $("<#{tagName} />")
 
@@ -9,22 +12,22 @@ class Gunther.Template
         # For every attribute object set
         for attribute in attributes
             for attributeName, attributeValue of attribute
+                do (attributeName, attributeValue) ->
+                    # Bind events
+                    if _.include Gunther.HTML.eventNames, attributeName
+                        el.bind attributeName, (args...) ->
+                            attributeValue args...
 
-                # Bind events
-                if _.include Gunther.HTML.eventNames, attributeName
-                    el.bind attributeName, (args...) ->
-                        attributeValue args...
+                    # See if we get a BoundProperty, which we bind to (and set)
+                    else if attributeValue instanceof BoundProperty
+                        # Set the base attribute
+                        el.attr attributeName, attributeValue.getValue()
+                        # On change re-set the attribute
+                        attributeValue.bind 'change', (newValue) -> el.attr attributeName, newValue
 
-                # See if we get a BoundProperty, which we bind to (and set)
-                else if attributeValue instanceof BoundProperty
-                    # Set the base attribute
-                    el.attr attributeName, attributeValue.getValue()
-                    # On change re-set the attribute
-                    attributeValue.bind 'change', (newValue) -> el.attr attributeName, newValue
-
-                # Else try to set directly
-                else
-                    el.attr attributeName, attributeValue
+                    # Else try to set directly
+                    else
+                        el.attr attributeName, attributeValue
 
     # Generate children for a DOM element
     @generateChildren: (el, childFn, scope) ->
@@ -60,7 +63,14 @@ class Gunther.Template
         @fn.apply this, args
 
         # Add all children of root to the element we're supposed to render into
-        @root.children()
+        children = @root.children()
+
+        # Parse dom with the DOM parsers
+        for domParser in Gunther.Template.domParsers
+            for child in children
+                domParser child
+
+        children
         # Do we remove them from root afterwards?
         #@root.remove()
 
