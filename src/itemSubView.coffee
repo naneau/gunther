@@ -40,7 +40,7 @@ class ItemSubView extends Backbone.View
 
         # If the item is a view, we render it and fetch it's element
         else if item[@key] instanceof Backbone.View
-            item[key].render()
+            item[@key].render()
             item[@elementKey] = item[@key].el
 
         # There is no else.
