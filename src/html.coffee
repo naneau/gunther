@@ -18,7 +18,7 @@ class Gunther.HTML
         "track", "wbr", "applet", "acronym", "bgsound", "dir", "frameset",
         "noframes", "isindex", "listing", "nextid", "noembed", "plaintext", "rb",
         "strike", "xmp", "big", "blink", "center", "font", "marquee", "multicol",
-        "nobr", "spacer", "tt", "basefont", "frame"]
+        "nobr", "spacer", "tt", "basefont", "frame", "date"]
 
     # List of default HTML Events
     # should be easy enough to extend with custom events
