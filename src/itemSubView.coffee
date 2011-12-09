@@ -26,6 +26,9 @@ class ItemSubView extends Backbone.View
 
         # When an item is removed, remove the element, or the view
         @model.bind 'remove', (item) =>
+            # Guard, we may be removed before our own 'add' event fired
+            return if not item[@key]?
+
             if item[@key] instanceof Backbone.View
                 item[@key].remove()
             else
