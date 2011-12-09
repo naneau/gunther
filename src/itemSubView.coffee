@@ -14,7 +14,7 @@ class ItemSubView extends Backbone.View
         @prepend = if options.prepend? then options.prepend else false
 
         # View/Template generator
-        @generator = options.template
+        @generator = options.generator
 
         # Init the items
         @model.each (item) => @initItem item
