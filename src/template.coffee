@@ -84,6 +84,13 @@ class Gunther.Template
         new Backbone.View
             el: el
 
+    # Add text to the current element
+    text: (text) ->
+        @current.append document.createTextNode text
+
+    # Shortcut for create child (T for Tag)
+    t: (tagName, args...) -> @createChild tagName, args...
+
     # Create a child to @current, recurse and add children to it, etc.
     createChild: (tagName, args...) ->
         # Element we're working on starts out with the current one set up in
@@ -133,6 +140,3 @@ for htmlElement in Gunther.HTML.elements
     do (htmlElement) -> # gotta love for...do :)
         Gunther.Template::[htmlElement] = (args...) ->
             @createChild htmlElement, args...
-
-# Export Gunther to the global scope
-window.Gunther = Gunther
