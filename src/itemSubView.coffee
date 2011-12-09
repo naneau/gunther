@@ -10,6 +10,9 @@ class ItemSubView extends Backbone.View
         @key = "_subview-#{options.key}"
         @elementKey = "_subview-element-#{options.key}"
 
+        # Prepend instead of append elements?
+        @prepend = if options.prepend? then options.prepend else false
+
         # View/Template generator
         @generator = options.template
 
@@ -48,7 +51,10 @@ class ItemSubView extends Backbone.View
             throw new Error 'Generator must return either a Gunther.Template or a Backbone.View instance'
 
         # Append the results
-        @el.append item[@elementKey]
+        if @prepend
+            @el.prepend item[@elementKey]
+        else
+            @el.append item[@elementKey]
 
     # Render the subview
     render: () ->
