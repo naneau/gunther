@@ -130,10 +130,7 @@ class Gunther.Template
     # where the view can manage a DOM element which is unchanging (the view
     # does not get re-rendered when elements are added to/removed from the
     # collection)
-    itemSubView: (collection, key, template) -> new ItemSubView
-        model: collection
-        key: key
-        template: template
+    itemSubView: (options) -> new ItemSubView options
 
 # Set up all HTML elements as functions
 for htmlElement in Gunther.HTML.elements
