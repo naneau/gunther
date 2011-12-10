@@ -3,14 +3,14 @@
   "name": "gunther",
   "main": "./lib/gunther.js",
   "description": "Gunther is a template/view drop-in for Backbone.js",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "homepage": "http://naneau.net/projects/gunther",
   "repository": {
     "type": "git",
     "url": "git@github.com:naneau/gunther.git"
   },
   "engines": {
-    "node": "~v0.4.11"
+    "node": ">=v0.4.0"
   },
   "dependencies": {},
   "devDependencies": {
