@@ -53,7 +53,7 @@ class Gunther.Template
 
     # Render
     render: (args...) ->
-        # Set up a root element, its children will be conferred
+        # Set up a root element, its children will be transferred
         @root = $('<div />')
 
         # Current element, starts out as the root element, but will change in the tree
