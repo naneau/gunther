@@ -10,17 +10,16 @@ class ExampleView extends Backbone.View
             @a click: ((e) -> collection.removeRandom()), -> 'Remove a random item'
 
         # Set up sub views for all items in the collection
-        #
-        # The collection is specified, as is a key to store the views under
-        # (avoiding collisions). You are supposed to set up a function that
-        # generates a subview, either using a template or setting up a view
-        # directly
-        @div -> @itemSubView collection, 'example', (item) -> new Gunther.Template ->
+        @div -> @itemSubView
+            # Model to use
+            model: collection
 
-            # Set up a container class (which will be the "el" in the view)
-            @li class: "container-#{item.get 'index'}", (element) -> new ItemView
-                model: item,
-                element: element # element is the li
+            # Generator for the subview
+            generator: (item) -> new Gunther.Template ->
+                # Set up a container class (which will be the "el" in the view)
+                @li class: "container-#{item.get 'index'}", (element) -> new ItemView
+                    model: item,
+                    element: element # element is the li
 
     # Render
     render: () ->
