@@ -118,18 +118,9 @@ class Gunther.Template
         null
 
     # Bind to a property of a model
-    #
-    # When the property changes the contents are refreshed with the new value.
-    # Additionally you can provide a "value" function, that gets called to
-    # create the new value
     bind: (args...) -> new BoundProperty args...
 
     # Set up a subview for every item in the collection
-    #
-    # This ensures that only one view/template is rendered for every item,
-    # where the view can manage a DOM element which is unchanging (the view
-    # does not get re-rendered when elements are added to/removed from the
-    # collection)
     itemSubView: (options) -> new ItemSubView options
 
 # Set up all HTML elements as functions
