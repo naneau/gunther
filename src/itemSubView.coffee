@@ -11,7 +11,7 @@ class ItemSubView extends Backbone.View
 
         # Identifiers to store view/dom element under
         @key = "_subview-#{ItemSubView.generator.generate()}"
-        @elementKey = "_subview-element-#{options.key}"
+        @elementKey = "element-#{@key}"
 
         # Prepend instead of append elements?
         @prepend = if options.prepend? then options.prepend else false
