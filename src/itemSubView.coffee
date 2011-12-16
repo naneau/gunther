@@ -3,11 +3,14 @@
 # Will maintain its element with a list of items that come from a collection. Adding new elements and removing old ones
 class ItemSubView extends Backbone.View
 
+    # ID Generator
+    @generator: new Gunther.IDGenerator
+
     # Constructor
     initialize: (options) ->
 
         # Identifiers to store view/dom element under
-        @key = "_subview-#{options.key}"
+        @key = "_subview-#{ItemSubView.generator.generate()}"
         @elementKey = "_subview-element-#{options.key}"
 
         # Prepend instead of append elements?
