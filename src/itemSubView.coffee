@@ -1,6 +1,10 @@
 # Subview for items
 #
-# Will maintain its element with a list of items that come from a collection. Adding new elements and removing old ones
+# Will maintain its element with a list of items that come from a collection
+# adding new elements and removing old ones. The item sub view is set up with
+# both a collection and a "generator". This generator function will be called
+# for each and every item in the collection, and is supposed to return either a
+# Gunther.Template, or a Backbone.View instance.
 class ItemSubView extends Backbone.View
 
     # ID Generator
