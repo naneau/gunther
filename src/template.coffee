@@ -35,7 +35,7 @@ class Gunther.Template
         childResult = childFn.apply scope
 
         # If the child generator returns a string, we have to append it as a text element to the current element
-        el.append childResult if typeof childResult isnt 'object'
+        el.append document.createTextNode childResult if typeof childResult isnt 'object'
 
         # If we get a bound property, we set up the initial value, as well as a change watcher
         if childResult instanceof BoundProperty
@@ -84,10 +84,31 @@ class Gunther.Template
         new Backbone.View
             el: el
 
-
     # Add text to the current element
+    #
+    # This will create a text node and append it to the current element, the
+    # contents of which can be either a string, or a bound property (see
+    # @bind())
     text: (text) ->
-        @current.append document.createTextNode text
+
+        # Create text node
+        el = document.createTextNode ''
+
+        # Set the contents of the child node
+        if typeof text is 'string'
+            el.nodeValue = text
+        else
+            # If a function is passed, call it
+            childResult = text.apply this if typeof text is 'function'
+
+            # If we get a bound property, we set up the initial value, as well as a change watcher
+            if childResult instanceof BoundProperty
+                el.nodeValue = childResult.getValue()
+                childResult.bind 'change', (newVal) ->
+                    el.nodeValue = newVal
+
+        # Append the child node
+        @current.append el
 
     # Create a child to @current, recurse and add children to it, etc.
     addElement: (tagName, args...) ->
