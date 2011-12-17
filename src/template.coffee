@@ -84,15 +84,13 @@ class Gunther.Template
         new Backbone.View
             el: el
 
+
     # Add text to the current element
     text: (text) ->
         @current.append document.createTextNode text
 
-    # Shortcut for create child (T for Tag)
-    t: (tagName, args...) -> @createChild tagName, args...
-
     # Create a child to @current, recurse and add children to it, etc.
-    createChild: (tagName, args...) ->
+    addElement: (tagName, args...) ->
         # Element we're working on starts out with the current one set up in
         # the this scope, but will change in the child, so we keep a copy here
         current = @current
@@ -123,8 +121,14 @@ class Gunther.Template
     # Set up a subview for every item in the collection
     itemSubView: (options) -> new ItemSubView options
 
+    # Shortcut for addElement
+    e: (tagName, args...) -> @addElement tagName, args...
+
+    # Shortcut for add text
+    t: (args...) -> @text args...
+
 # Set up all HTML elements as functions
 for htmlElement in Gunther.HTML.elements
     do (htmlElement) -> # gotta love for...do :)
         Gunther.Template::[htmlElement] = (args...) ->
-            @createChild htmlElement, args...
+            @addElement htmlElement, args...
