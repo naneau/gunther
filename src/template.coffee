@@ -5,7 +5,7 @@ class Gunther.Template
     @domParsers = []
 
     # Create a DOM element
-    @createHtmlElement: (tagName) -> $("<#{tagName} />")
+    @createHtmlElement: (tagName) -> $(document.createElement tagName)
 
     # Add attributes to a DOM element
     @addAttributes: (el, attributes) ->
