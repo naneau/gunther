@@ -6,6 +6,13 @@ Gunther = {}
 #
 if (typeof require)?
     module.exports = Gunther
+
+    # Require underscore
+    _ = require 'underscore'
+
 else
     # Export Gunther to the global scope
     window.Gunther = Gunther
+
+# Make sure we have underscore.js
+throw 'Underscore.js must be loaded for Gunther to work' if (typeof _) is not 'function'
