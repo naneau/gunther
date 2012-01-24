@@ -10,6 +10,9 @@ if (typeof require)?
     # Require underscore
     _ = require 'underscore'
 
+    # Require backbone
+    Backbone = require 'backbone'
+
 else
     # Export Gunther to the global scope
     window.Gunther = Gunther
