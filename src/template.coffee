@@ -34,6 +34,9 @@ class Gunther.Template
         # Do the actual recursion, setting up the scope proper, and passing the parent element
         childResult = childFn.apply scope
 
+        # Make sure we get a result in the first place
+        return if childResult is undefined
+
         # If the child generator returns a string, we have to append it as a text element to the current element
         el.append document.createTextNode childResult if typeof childResult isnt 'object'
 
