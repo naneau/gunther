@@ -23,23 +23,43 @@ class ItemSubView extends Backbone.View
         # View/Template generator
         @generator = options.generator
 
+        # Hash of items that have been rendered
+        @renderedItems = {}
+
         # Init the items
         @model.each (item) => @initItem item
 
         # When an item is added, init and render it
-        @model.bind 'add', (item) =>
-            @initItem item
-            @renderItem item
+        @model.bind 'add', (item) => @addItem item
 
         # When an item is removed, remove the element, or the view
-        @model.bind 'remove', (item) =>
-            # Guard, we may be removed before our own 'add' event fired
-            return if not item[@key]?
+        @model.bind 'remove', (item) => @renderItem item
 
-            if item[@key] instanceof Backbone.View
-                item[@key].remove()
-            else
-                item[@elementKey].remove()
+        # If the entire collection is reset, remove all items
+        @model.bind 'reset', (newItems) =>
+
+            # Remove all items we had previously rendered
+            @removeItem item for key, item of @renderedItems
+
+            # Add the new items
+            newItems.each (item) => @addItem item
+
+
+    # Add an item
+    addItem: (item) ->
+        @initItem item
+        @renderItem item
+
+    # Remove an item
+    removeItem: (item) ->
+        console.log 'removing', item, item[@key]
+        # Guard, we may be removed before our own 'add' event fired
+        return if not item[@key]?
+
+        if item[@key] instanceof Backbone.View
+            item[@key].remove()
+        else
+            item[@elementKey].remove()
 
     # Init the view in the item
     initItem: (item) ->
@@ -65,6 +85,9 @@ class ItemSubView extends Backbone.View
             @el.prepend item[@elementKey]
         else
             @el.append item[@elementKey]
+
+        # Set up a hash with all rendered items
+        @renderedItems[item.cid] = item
 
     # Render the subview
     render: () ->
