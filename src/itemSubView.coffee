@@ -52,7 +52,6 @@ class ItemSubView extends Backbone.View
 
     # Remove an item
     removeItem: (item) ->
-        console.log 'removing', item, item[@key]
         # Guard, we may be removed before our own 'add' event fired
         return if not item[@key]?
 
