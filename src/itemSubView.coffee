@@ -33,7 +33,7 @@ class ItemSubView extends Backbone.View
         @model.bind 'add', (item) => @addItem item
 
         # When an item is removed, remove the element, or the view
-        @model.bind 'remove', (item) => @renderItem item
+        @model.bind 'remove', (item) => @removeItem item
 
         # If the entire collection is reset, remove all items
         @model.bind 'reset', (newItems) =>
