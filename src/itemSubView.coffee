@@ -44,7 +44,6 @@ class ItemSubView extends Backbone.View
             # Add the new items
             newItems.each (item) => @addItem item
 
-
     # Add an item
     addItem: (item) ->
         @initItem item
@@ -59,6 +58,9 @@ class ItemSubView extends Backbone.View
             item[@key].remove()
         else
             item[@elementKey].remove()
+
+        # Remove the item from our hash of items we rendered
+        delete @renderedItems[item.cid]
 
     # Init the view in the item
     initItem: (item) ->
