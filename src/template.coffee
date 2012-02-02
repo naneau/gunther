@@ -139,6 +139,17 @@ class Gunther.Template
 
         null
 
+    # Append an element
+    append: (element) ->
+        if element instanceof Backbone.View
+            # Render the view
+            element.render()
+
+            # Append its element
+            @current.append element.el
+        else
+            @current.append element
+
     # Bind to a property of a model
     bind: (args...) -> new BoundProperty args...
 
