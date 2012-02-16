@@ -150,6 +150,9 @@ class Gunther.Template
         else
             @current.append element
 
+    # Render a sub-template
+    subTemplate: (template, args...) -> template.renderInto @current, args...
+
     # Bind to a property of a model
     bind: (args...) -> new BoundProperty args...
 
