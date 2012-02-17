@@ -23,5 +23,24 @@ class BoundProperty
         else
             generatedValue
 
+    # Get value into a DOM element
+    getValueInEl: (el) ->
+
+        # Generate the value through the generator
+        generatedValue = @valueGenerator()
+
+        # If it is a child template, render it into el
+        if generatedValue instanceof Gunther.Template
+            generatedValue.renderInto el, @model
+
+        # Render subview
+        else if generatedValue instanceof Backbone.View
+            generatedValue.el = el
+            generatedValue.render()
+
+        # Simply set as HTML
+        else
+            el.html = generatedValue
+
 # BoundProperty is an EventEmitter... (why can't I just extend from Backbone.Events?)
 _.extend BoundProperty.prototype, Backbone.Events
