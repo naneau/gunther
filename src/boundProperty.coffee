@@ -40,7 +40,11 @@ class BoundProperty
 
         # Simply set as HTML
         else
-            el.html = generatedValue
+            if el.length > 0
+                for element in el
+                    element.textContent = generatedValue
+            else
+                el.textContent = generatedValue
 
 # BoundProperty is an EventEmitter... (why can't I just extend from Backbone.Events?)
 _.extend BoundProperty.prototype, Backbone.Events
