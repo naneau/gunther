@@ -42,9 +42,16 @@ class Gunther.Template
 
         # If we get a bound property, we set up the initial value, as well as a change watcher
         if childResult instanceof BoundProperty
-            el.html childResult.getValue()
+
+            # Initial generated value
+            childResult.getValueInEl el
+
+            # Track changes
             childResult.bind 'change', (newVal) ->
-                el.html newVal
+                # Empty the node for updates
+                el.empty()
+
+                childResult.getValueInEl el
 
         # The child is a new View instance, we set up the proper element and render it
         else if childResult instanceof Backbone.View
