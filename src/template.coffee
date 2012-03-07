@@ -88,11 +88,11 @@ class Gunther.Template
     #
     # Will return a Backbone.View that can be used/modified to your wishes
     renderInto: (el, args...) ->
-        el.append child for child in @render args...
+        ($ el).append child for child in @render args...
 
         # Return a view
         new Backbone.View
-            el: el
+            el: ($ el)
 
     # Add text to the current element
     #
@@ -133,7 +133,12 @@ class Gunther.Template
         @current = el
 
         # We have to recurse, if the last argument passed is a function
-        Gunther.Template.generateChildren el, args.pop(), this if typeof args[args.length - 1] is 'function'
+        if typeof args[args.length - 1] is 'function'
+            Gunther.Template.generateChildren el, args.pop(), this
+
+        # If we get passed a string as last value, set it as the node value
+        else if typeof args[args.length - 1] is 'string'
+            el.nodeValue = args.pop()
 
         # Set up the attributes for the element
         Gunther.Template.addAttributes el, args
