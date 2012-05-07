@@ -7,7 +7,7 @@ buildOrder = ['root.coffee', 'idGenerator.coffee', 'html.coffee', 'boundProperty
 
 # Build Gunther
 task "build", "Build Gunther", () ->
-    exec "./node_modules/coffee-script/bin/coffee -o lib -j gunther -c ./src/#{buildOrder.join ' ./src/'}", (error, stdout, stderr) ->
+    exec "./node_modules/.bin/coffee -o lib -j gunther -c ./src/#{buildOrder.join ' ./src/'}", (error, stdout, stderr) ->
         if not error?
             console.log 'Gunther compiled'
             invoke 'minify'
@@ -16,7 +16,7 @@ task "build", "Build Gunther", () ->
 
 # Minify
 task "minify", "Minify Gunther's js", () ->
-    exec "./node_modules/uglify-js/bin/uglifyjs -o ./lib/gunther-min.js ./lib/gunther.js", (error, stdout, stderr) ->
+    exec "./node_modules/.bin/uglifyjs -o ./lib/gunther-min.js ./lib/gunther.js", (error, stdout, stderr) ->
         if not error?
             console.log 'Gunther minified'
         else
