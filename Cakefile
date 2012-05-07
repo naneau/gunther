@@ -16,7 +16,7 @@ task "build", "Build Gunther", () ->
 
 # Minify
 task "minify", "Minify Gunther's js", () ->
-    exec "./node_modules/.bin/uglifyjs -o ./lib/gunther-min.js ./lib/gunther.js", (error, stdout, stderr) ->
+    exec "./node_modules/.bin/uglifyjs -nc -o ./lib/gunther-min.js ./lib/gunther.js", (error, stdout, stderr) ->
         if not error?
             console.log 'Gunther minified'
         else
