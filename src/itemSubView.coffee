@@ -83,9 +83,9 @@ class ItemSubView extends Backbone.View
 
         # Append the results
         if @prepend
-            @el.prepend item[@elementKey]
+            @$el.prepend item[@elementKey]
         else
-            @el.append item[@elementKey]
+            @$el.append item[@elementKey]
 
         # Set up a hash with all rendered items
         @renderedItems[item.cid] = item
