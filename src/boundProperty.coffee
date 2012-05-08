@@ -35,7 +35,7 @@ class BoundProperty
 
         # Render subview
         else if generatedValue instanceof Backbone.View
-            generatedValue.el = el
+            generatedValue.setElement el
             generatedValue.render()
 
         # Simply set as HTML
