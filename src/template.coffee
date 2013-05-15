@@ -126,7 +126,7 @@ class Gunther.Template
         @current.append el
 
     # Create a child to @current, recurse and add children to it, etc.
-    addElement: (tagName, args...) ->
+    element: (tagName, args...) ->
 
         # Element we're working on starts out with the current one set up in
         # the "this" scope. This will change in the child rendering, so we need
@@ -185,8 +185,8 @@ class Gunther.Template
     # Set up a subview for every item in the collection
     itemSubView: (options) -> new ItemSubView options
 
-    # Alias for addElement
-    e: (tagName, args...) -> @addElement tagName, args...
+    # Alias for element
+    e: (tagName, args...) -> @element tagName, args...
 
     # Alias for add text
     t: (args...) -> @text args...
@@ -195,4 +195,4 @@ class Gunther.Template
 for htmlElement in Gunther.HTML.elements
     do (htmlElement) -> # gotta love for...do :)
         Gunther.Template::[htmlElement] = (args...) ->
-            @addElement htmlElement, args...
+            @element htmlElement, args...
