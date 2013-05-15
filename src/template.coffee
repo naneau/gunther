@@ -9,6 +9,7 @@ class Gunther.Template
 
     # Add attributes to a DOM element
     @addAttributes: (el, attributes) ->
+
         # For every attribute object set
         for attribute in attributes
             for attributeName, attributeValue of attribute
@@ -31,6 +32,7 @@ class Gunther.Template
 
     # Generate children for a DOM element
     @generateChildren: (el, childFn, scope) ->
+
         # Do the actual recursion, setting up the scope proper, and passing the parent element
         childResult = childFn.apply scope
 
@@ -63,6 +65,7 @@ class Gunther.Template
 
     # Render
     render: (args...) ->
+
         # Set up a root element, its children will be transferred
         @root = $('<div />')
 
@@ -88,6 +91,8 @@ class Gunther.Template
     #
     # Will return a Backbone.View that can be used/modified to your wishes
     renderInto: (el, args...) ->
+
+        # Append a child for every element @render returns
         ($ el).append child for child in @render args...
 
         # Return a view
@@ -122,8 +127,10 @@ class Gunther.Template
 
     # Create a child to @current, recurse and add children to it, etc.
     addElement: (tagName, args...) ->
+
         # Element we're working on starts out with the current one set up in
-        # the this scope, but will change in the child, so we keep a copy here
+        # the "this" scope. This will change in the child rendering, so we need
+        # to retain a reference
         current = @current
 
         # Element to render in
@@ -133,11 +140,11 @@ class Gunther.Template
         @current = el
 
         # We have to recurse, if the last argument passed is a function
-        if typeof args[args.length - 1] is 'function'
+        if (typeof args[args.length - 1]) is 'function'
             Gunther.Template.generateChildren el, args.pop(), this
 
         # If we get passed a string as last value, set it as the node value
-        else if typeof args[args.length - 1] is 'string'
+        else if (typeof args[args.length - 1]) is 'string'
             el.nodeValue = args.pop()
 
         # Set up the attributes for the element
@@ -154,12 +161,16 @@ class Gunther.Template
     # Append an element
     append: (element) ->
         if element instanceof Backbone.View
-            # Render the view
+            # The element is a Backbone view
+
+            # Render it
             element.render()
 
             # Append its element
             @current.append element.el
+
         else
+            # Assume it can be appended directly
             @current.append element
 
     # Render a sub-template
@@ -171,10 +182,10 @@ class Gunther.Template
     # Set up a subview for every item in the collection
     itemSubView: (options) -> new ItemSubView options
 
-    # Shortcut for addElement
+    # Alias for addElement
     e: (tagName, args...) -> @addElement tagName, args...
 
-    # Shortcut for add text
+    # Alias for add text
     t: (args...) -> @text args...
 
 # Set up all HTML elements as functions
