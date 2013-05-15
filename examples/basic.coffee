@@ -4,25 +4,23 @@ class ExampleView extends Backbone.View
     # Simple template, renders an unordered list for every item
     @template: new Gunther.Template (model) ->
 
-        @section () ->
+        # Nested section
+        @e 'section', () ->
 
-            # Simple text and a property from the model get set up as headers
-            @h1 -> 'Basic Example'
-            @text -> model.get 'text'
+            # A header
+            @e 'h1', 'Basic Example'
+
+            # A simple paragraph with text
+            @e 'p', 'Text from a template'
+
+            # Text from a model
+            @e 'p', model.get 'text'
 
             # A bound property will refresh its contents when the property in the model changes
             @div -> @bind model, 'autoUpdated'
 
-            # You can also set up a value generating function for a bound property
-            @text -> @bind model, 'autoUpdated', () ->
-                "The valued of 'autoUpdated' was updated #{model.get 'autoUpdated'} times"
-
             # Not all tags need parameters
-            @br()
-
-            # While all HTML elements are set up as alias functions, you can
-            # also create an element for non standard tags, in this case <foo />
-            @addElement 'foo', -> 'This is a <foo /> element'
+            @e 'br'
 
     # Render the template into our DOM element
     render: () -> ExampleView.template.renderInto @el, @model
