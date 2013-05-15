@@ -139,13 +139,16 @@ class Gunther.Template
         # Change current element to the newly created one for our children
         @current = el
 
+        # If we have more than one argument
+        #if args.length > 1
+
         # We have to recurse, if the last argument passed is a function
         if (typeof args[args.length - 1]) is 'function'
             Gunther.Template.generateChildren el, args.pop(), this
 
         # If we get passed a string as last value, set it as the node value
         else if (typeof args[args.length - 1]) is 'string'
-            el.nodeValue = args.pop()
+            el.append document.createTextNode args.pop()
 
         # Set up the attributes for the element
         Gunther.Template.addAttributes el, args
