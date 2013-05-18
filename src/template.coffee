@@ -7,6 +7,13 @@ class Gunther.Template
     # Create a DOM element
     @createHtmlElement: (tagName) -> $(document.createElement tagName)
 
+    # Value for an element whereby both a function and a direct value can be passed
+    # scope is optional
+    @elementValue: (generator, scope = {}) ->
+        return generator.apply scope if typeof generator is 'function'
+
+        generator
+
     # Add attributes to a DOM element
     @addAttributes: (el, attributes) ->
 
@@ -34,7 +41,7 @@ class Gunther.Template
     @generateChildren: (el, childFn, scope) ->
 
         # Do the actual recursion, setting up the scope proper, and passing the parent element
-        childResult = childFn.apply scope
+        childResult = Gunther.Template.elementValue childFn, scope
 
         # Make sure we get a result in the first place
         return if childResult is undefined
@@ -48,11 +55,13 @@ class Gunther.Template
             # Initial generated value
             childResult.getValueInEl el
 
-            # Track changes
+            # Track changes in the bound property
             childResult.bind 'change', (newVal) ->
+
                 # Empty the node for updates
                 el.empty()
 
+                # Set the new value
                 childResult.getValueInEl el
 
         # The child is a new View instance, we set up the proper element and render it
@@ -114,7 +123,7 @@ class Gunther.Template
             el.nodeValue = text
         else
             # If a function is passed, call it
-            childResult = text.apply this if typeof text is 'function'
+            childResult = Gunther.Template.elementValue text, this
 
             # If we get a bound property, we set up the initial value, as well as a change watcher
             if childResult instanceof BoundProperty
@@ -142,12 +151,19 @@ class Gunther.Template
         # If we have more than one argument
         #if args.length > 1
 
+        # The last argument
+        lastArgument = args[args.length - 1]
+
         # We have to recurse, if the last argument passed is a function
-        if (typeof args[args.length - 1]) is 'function'
+        if typeof lastArgument is 'function'
+            Gunther.Template.generateChildren el, args.pop(), this
+
+        # Bound property passed?
+        else if lastArgument instanceof BoundProperty
             Gunther.Template.generateChildren el, args.pop(), this
 
         # If we get passed a string as last value, set it as the node value
-        else if (typeof args[args.length - 1]) is 'string'
+        else if typeof lastArgument is 'string'
             el.append document.createTextNode args.pop()
 
         # Set up the attributes for the element
@@ -160,6 +176,10 @@ class Gunther.Template
         @current = current
 
         null
+
+    # Set a property
+    property: (name, value, args...) ->
+        @current.attr name, value
 
     # Append an element
     append: (element) ->
@@ -191,8 +211,11 @@ class Gunther.Template
     # Alias for add text
     t: (args...) -> @text args...
 
-# Set up all HTML elements as functions
-for htmlElement in Gunther.HTML.elements
-    do (htmlElement) -> # gotta love for...do :)
-        Gunther.Template::[htmlElement] = (args...) ->
-            @element htmlElement, args...
+    # Property
+    p: (args...) -> @property.apply this, args
+
+## Set up all HTML elements as functions
+#for htmlElement in Gunther.HTML.elements
+    #do (htmlElement) -> # gotta love for...do :)
+        #Gunther.Template::[htmlElement] = (args...) ->
+            #@element htmlElement, args...
