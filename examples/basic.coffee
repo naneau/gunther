@@ -21,14 +21,9 @@ class ExampleView extends Backbone.View
             # A bound property will refresh its contents when the property in the model changes
             @e 'p', @bind model, 'autoUpdated'
 
-            # This is a short form of
-            @e 'p', ->
-                @text @bind model, 'autoUpdated'
-
             # You can also use a function for the value of a bound property
-            @e 'p', ->
-                @text @bind model, 'autoUpdated', (newValue) ->
-                    "This string was interpolated #{model.get 'autoUpdated'} times"
+            @e 'p', @bind model, 'autoUpdated', (newValue) ->
+                "This string was interpolated #{model.get 'autoUpdated'} times"
 
             # Not all tags need parameters
             @e 'br'
