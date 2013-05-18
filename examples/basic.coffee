@@ -7,7 +7,7 @@ class ExampleView extends Backbone.View
         # Nested section
         @e 'section', () ->
 
-            @property 'class', 'test'
+            @attribute 'class', 'test'
 
             # A header
             @e 'h1', 'Basic Example'
@@ -18,7 +18,7 @@ class ExampleView extends Backbone.View
             # Text from a model
             @e 'p', model.get 'text'
 
-            # A bound property will refresh its contents when the property in the model changes
+            # A bound text will refresh its contents when the property in the model changes
             @e 'p', @bind model, 'autoUpdated'
 
             # You can also use a function for the value of a bound property
