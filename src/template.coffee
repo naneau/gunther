@@ -14,29 +14,6 @@ class Gunther.Template
 
         generator
 
-    # Add attributes to a DOM element
-    @addAttributes: (el, attributes) ->
-
-        # For every attribute object set
-        for attribute in attributes
-            for attributeName, attributeValue of attribute
-                do (attributeName, attributeValue) ->
-                    # Bind events
-                    if _.include Gunther.HTML.eventNames, attributeName
-                        el.bind attributeName, (args...) ->
-                            attributeValue args...
-
-                    # See if we get a BoundProperty, which we bind to (and set)
-                    else if attributeValue instanceof BoundProperty
-                        # Set the base attribute
-                        el.attr attributeName, attributeValue.getValue()
-                        # On change re-set the attribute
-                        attributeValue.bind 'change', (newValue) -> el.attr attributeName, newValue
-
-                    # Else try to set directly
-                    else
-                        el.attr attributeName, attributeValue
-
     # Generate children for a DOM element
     @generateChildren: (el, childFn, scope) ->
 
@@ -163,9 +140,6 @@ class Gunther.Template
         else if typeof lastArgument is 'string'
             el.append document.createTextNode args.pop()
 
-        # Set up the attributes for the element
-        Gunther.Template.addAttributes el, args
-
         # Append it to the current element
         current.append el
 
@@ -176,7 +150,22 @@ class Gunther.Template
 
     # Set a property
     attribute: (name, value, args...) ->
-        @current.attr name, value
+
+        # Current element
+        el = @current
+
+        # Set up binding for bound properties
+        if value instanceof BoundProperty
+
+            # Set the base value
+            el.attr name, value.getValue()
+
+            # On change re-set the attribute
+            value.bind 'change', (newValue) -> el.attr name, value
+
+        # Else try to set directly
+        else
+            el.attr name, value
 
     # Set up an event handler
     on: (event, handler) ->
@@ -217,9 +206,3 @@ class Gunther.Template
     # Attribute
     a: (args...) -> @attribute.apply this, args
     attr: (args...) -> @attribute.apply this, args
-
-## Set up all HTML elements as functions
-#for htmlElement in Gunther.HTML.elements
-    #do (htmlElement) -> # gotta love for...do :)
-        #Gunther.Template::[htmlElement] = (args...) ->
-            #@element htmlElement, args...
