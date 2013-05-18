@@ -148,9 +148,6 @@ class Gunther.Template
         # Change current element to the newly created one for our children
         @current = el
 
-        # If we have more than one argument
-        #if args.length > 1
-
         # The last argument
         lastArgument = args[args.length - 1]
 
@@ -180,6 +177,10 @@ class Gunther.Template
     # Set a property
     property: (name, value, args...) ->
         @current.attr name, value
+
+    # Set up an event handler
+    on: (event, handler) ->
+        @current.bind event, handler
 
     # Append an element
     append: (element) ->
