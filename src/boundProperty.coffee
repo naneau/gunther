@@ -3,6 +3,7 @@ class BoundProperty
 
     # Constructor
     constructor: (@model, @propertyNames, @valueGenerator) ->
+
         # Default the value generator to a "get" of the property if we can
         if not @valueGenerator? and typeof @propertyNames is 'string'
             @valueGenerator = () => @model.get @propertyNames[0]
