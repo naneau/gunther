@@ -215,7 +215,8 @@ class Gunther.Template
     t: (args...) -> @text args...
 
     # Attribute
-    a: (args...) -> @property.apply this, args
+    a: (args...) -> @attribute.apply this, args
+    attr: (args...) -> @attribute.apply this, args
 
 ## Set up all HTML elements as functions
 #for htmlElement in Gunther.HTML.elements
