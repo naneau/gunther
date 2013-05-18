@@ -175,7 +175,7 @@ class Gunther.Template
         null
 
     # Set a property
-    property: (name, value, args...) ->
+    attribute: (name, value, args...) ->
         @current.attr name, value
 
     # Set up an event handler
@@ -206,14 +206,16 @@ class Gunther.Template
     # Set up a subview for every item in the collection
     itemSubView: (options) -> new ItemSubView options
 
+    # Aliases for shorter notation
+    #
     # Alias for element
     e: (tagName, args...) -> @element tagName, args...
 
     # Alias for add text
     t: (args...) -> @text args...
 
-    # Property
-    p: (args...) -> @property.apply this, args
+    # Attribute
+    a: (args...) -> @property.apply this, args
 
 ## Set up all HTML elements as functions
 #for htmlElement in Gunther.HTML.elements
