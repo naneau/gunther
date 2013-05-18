@@ -74,8 +74,6 @@ class Gunther.Template
                 domParser child
 
         children
-        # Do we remove them from root afterwards?
-        #@root.remove()
 
     # Render into an element
     #
