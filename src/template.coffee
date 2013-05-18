@@ -43,7 +43,11 @@ class Gunther.Template
 
         # The child is a new View instance, we set up the proper element and render it
         else if childResult instanceof Backbone.View
+
+            # Set the view's element to the current one
             childResult.setElement el
+
+            # Render the view
             childResult.render()
 
     # Constructor
