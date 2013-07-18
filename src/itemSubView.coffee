@@ -44,6 +44,9 @@ class ItemSubView extends Backbone.View
             # Add the new items
             newItems.each (item) => @addItem item
 
+    # Overloaded setElement() because of lack of @$el in init
+    setElement: (@$el) ->
+
     # Add an item
     addItem: (item) ->
         @initItem item
