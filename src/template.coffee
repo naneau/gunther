@@ -170,8 +170,7 @@ class Gunther.Template
             el.attr name, value
 
     # Set up an event handler
-    on: (event, handler) ->
-        @current.bind event, handler
+    on: (event, handler) -> @current.bind event, handler
 
     # Append an element
     append: (element) ->
