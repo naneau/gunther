@@ -52,8 +52,17 @@ module.exports = (grunt) ->
 
         # Watch for changes
         watch:
-            scripts:
+
+            # Gunther source
+            source:
                 files: ['src/*.coffee']
+                tasks: ['default']
+                options:
+                    nospawn: false
+
+            # Examples source
+            examples:
+                files: ['examples/src/*.coffee']
                 tasks: ['default']
                 options:
                     nospawn: false
