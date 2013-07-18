@@ -10,6 +10,15 @@ class ItemSubView extends Backbone.View
     # ID Generator
     @generator: new Gunther.IDGenerator
 
+    # Naive sort, will detach all elements, then reattach them in order
+    # This may *not* be efficient for larger collections
+    @naiveSort: (collection, parentElement, elementKey) ->
+        # Detach
+        items = (item[elementKey].detach() for item in collection.toArray())
+
+        # Append again from the top
+        parentElement.append item for item in items
+
     # Constructor
     initialize: (options) ->
 
@@ -34,6 +43,9 @@ class ItemSubView extends Backbone.View
 
         # When an item is removed, remove the element, or the view
         @model.bind 'remove', (item) => @removeItem item
+
+        # Naive Sort
+        @model.bind 'sort', () => ItemSubView.naiveSort @model, @$el, @elementKey
 
         # If the entire collection is reset, remove all items
         @model.bind 'reset', (newItems) =>

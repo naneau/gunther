@@ -17,10 +17,23 @@ class ExampleView extends Backbone.View
                 @on 'click', (e) ->
                     collection.removeRandom()
 
-                @text 'Remove a random item'
+                @text 'Remove a random item '
+
+            @e 'a', ->
+                @on 'click', (e) ->
+                    collection.sortVar = 'index'
+                    collection.sort()
+
+                @text 'Sort by index '
+
+            @e 'a', ->
+                @on 'click', (e) ->
+                    collection.sortVar = 'value'
+                    collection.sort()
+
+                @text 'Sort by value '
 
         # Set up sub views for all items in the collection
-        itemCount = 0
         @e 'div', -> @itemSubView
 
             # Model to use
@@ -28,7 +41,8 @@ class ExampleView extends Backbone.View
 
             # Generator for the subview
             generator: (item) -> new Gunther.Template ->
-                @e 'div', "This is item #{itemCount++}"
+                @e 'div',
+                    "This is item #{item.get 'index'}, with value #{item.get 'value'}"
 
     # Render
     render: () ->

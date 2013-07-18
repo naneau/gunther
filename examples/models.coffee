@@ -29,14 +29,22 @@ class ExampleCollection extends Backbone.Collection
     # Constructor
     initialize: () ->
 
+
         # Set an index in all items
         @index = 0
         @bind 'add', (item) =>
-            item.set index: @index++
+            item.set
+                index: @index++
+                value: Math.round Math.random() * 100
 
         # Set up 10 sample items
         for x in [0..10]
             @add new ExampleModel
+
+    # Default sorting var
+    sortVar: 'index'
+
+    comparator: (item) -> item.get @sortVar
 
     # Remove a random item
     removeRandom: () ->
