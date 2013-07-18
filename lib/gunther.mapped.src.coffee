@@ -223,7 +223,6 @@ class Gunther.Template
 
         # Any and all classes in the description (div.foo.bar)
         classes = description.match /\.(-?[_a-zA-Z]+[_a-zA-Z0-9-]*)/ig
-        console.log classes
 
         # Join up classes
         join = (memo, val) -> memo + ' ' + val.substring 1
