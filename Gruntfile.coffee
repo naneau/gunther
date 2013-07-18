@@ -91,7 +91,7 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-less'
 
     # Default task
-    grunt.registerTask 'default', ['coffee:compileSource', 'coffee:compileSourceWithMap', 'uglify']
+    grunt.registerTask 'default', ['coffee:compileSource', 'coffee:compileSourceWithMap', 'copy:libToExamples', 'uglify']
 
     # Full examples compile
     grunt.registerTask 'examples', ['coffee:compileExamples', 'copy:libToExamples', 'less']
