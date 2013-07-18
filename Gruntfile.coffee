@@ -31,9 +31,18 @@ module.exports = (grunt) ->
                 src: 'lib/<%= pkg.name %>.js'
                 dest: 'lib/<%= pkg.name %>.min.js'
 
+        # Watch for changes
+        watch:
+            scripts:
+                files: ['src/*.coffee']
+                tasks: ['default']
+                options:
+                    nospawn: true
+
     # Load the tasks
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-uglify'
+    grunt.loadNpmTasks 'grunt-contrib-watch'
 
     # Default task(s).
     grunt.registerTask 'default', ['coffee', 'uglify']
