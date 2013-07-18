@@ -5,21 +5,30 @@ class ExampleView extends Backbone.View
     @template = new Gunther.Template (collection) ->
 
         # Set up some controls for adding/removing items
-        @div ->
-            @a click: ((e) -> collection.add new ExampleModel), -> 'Add an item '
-            @a click: ((e) -> collection.removeRandom()), -> 'Remove a random item'
+        @e 'div', ->
+
+            @e 'a', ->
+                @on 'click', (e) ->
+                    collection.add new ExampleModel
+
+                @text 'Add an item '
+
+            @e 'a', ->
+                @on 'click', (e) ->
+                    collection.removeRandom()
+
+                @text 'Remove a random item'
 
         # Set up sub views for all items in the collection
-        @div -> @itemSubView
+        itemCount = 0
+        @e 'div', -> @itemSubView
+
             # Model to use
             model: collection
 
             # Generator for the subview
             generator: (item) -> new Gunther.Template ->
-                # Set up a container class (which will be the "el" in the view)
-                @li class: "container-#{item.get 'index'}", (element) -> new ItemView
-                    model: item,
-                    element: element # element is the li
+                @e 'div', "This is item #{itemCount++}"
 
     # Render
     render: () ->
