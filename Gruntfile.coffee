@@ -11,14 +11,14 @@ module.exports = (grunt) ->
         # Compile all coffee
         coffee:
             # Compile Gunther
-            compile:
+            compileSource:
                 options:
                     join: true
                 files:
                     'lib/gunther.js': buildOrder
 
             # Compile Gunther, but with a source map, for debugging
-            compileWithMap:
+            compileSourceWithMap:
                 options:
                     join: true
                     sourceMap: true
@@ -35,17 +35,26 @@ module.exports = (grunt) ->
                 dest: 'examples/scripts'
                 ext: '.js'
 
+        # Examples less
+        less:
+            development:
+                options:
+                    paths: ["examples/styles"]
+                files:
+                    "./examples/styles/examples.css": "./examples/styles/examples.less"
+
         # Uglify results
         uglify:
             options:
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-            build:
+
+            source:
                 src: 'lib/<%= pkg.name %>.js'
                 dest: 'lib/<%= pkg.name %>.min.js'
 
         # Copy lib files to examples lib, for more contained distribution/testing
         copy:
-            lib:
+            libToExamples:
                 files: [
                     expand: true, src: ['lib/gunther.mapped.*'], dest: 'examples'
                 ]
@@ -60,10 +69,17 @@ module.exports = (grunt) ->
                 options:
                     nospawn: false
 
-            # Examples source
-            examples:
+            # Examples coffee source
+            examplesCoffee:
                 files: ['examples/src/*.coffee']
-                tasks: ['default']
+                tasks: ['coffee:compileExamples']
+                options:
+                    nospawn: false
+
+            # Examples less styling
+            examplesLess:
+                files: ['examples/styles/*.less']
+                tasks: ['less']
                 options:
                     nospawn: false
 
@@ -72,6 +88,10 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-uglify'
     grunt.loadNpmTasks 'grunt-contrib-watch'
     grunt.loadNpmTasks 'grunt-contrib-copy'
+    grunt.loadNpmTasks 'grunt-contrib-less'
 
-    # Default task(s).
-    grunt.registerTask 'default', ['coffee', 'uglify', 'copy']
+    # Default task
+    grunt.registerTask 'default', ['coffee:compileSource', 'coffee:compileSourceWithMap', 'uglify']
+
+    # Full examples compile
+    grunt.registerTask 'examples', ['coffee:compileExamples', 'copy:libToExamples', 'less']
