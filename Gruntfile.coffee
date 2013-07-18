@@ -47,7 +47,7 @@ module.exports = (grunt) ->
         copy:
             lib:
                 files: [
-                    expand: true, src: ['lib/*'], dest: 'examples'
+                    expand: true, src: ['lib/gunther.mapped.*'], dest: 'examples'
                 ]
 
         # Watch for changes
