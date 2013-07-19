@@ -209,7 +209,7 @@ class Gunther.Template
     # Accepts simple class/id descriptors too, in the form of div.foo/div#foo
     @createHtmlElement: (description) ->
         # Tag name to create
-        tagName = (description.match /([a-z]+)([\.|\#]?)/i)[1]
+        tagName = (description.match /([a-z0-9]+)([\.|\#]?)/i)[1]
 
         # Create the element
         element = $(document.createElement tagName)
