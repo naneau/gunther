@@ -4,6 +4,9 @@ class Gunther.Template
     # additional DOM parsers, can be used to set up plugins, etc.
     @domParsers = []
 
+    # Remove a partial
+    @removePartial = (key) -> delete Gunther.Template.partials.key
+
     # Value for an element whereby both a function and a direct value can be passed
     # scope is optional
     @elementValue: (generator, scope = {}) ->
@@ -187,6 +190,16 @@ class Gunther.Template
     # Render a sub-template
     subTemplate: (template, args...) -> template.renderInto @current, args...
 
+    # Render a registered partial
+    partial: (key, args...) ->
+
+        # Sanity check
+        throw new Error "Partial \"#{key}\" does not exist" if not Gunther.partials[key]?
+
+        template = new Gunther.Template Gunther.partials[key]
+
+        @subTemplate.apply this, [template].concat args
+
     # Bind to a property of a model
     bind: (args...) -> new BoundProperty args...
 
@@ -204,3 +217,6 @@ class Gunther.Template
     # Attribute
     a: (args...) -> @attribute.apply this, args
     attr: (args...) -> @attribute.apply this, args
+
+    # Partial
+    p: (args...) -> @partial.apply this, args
