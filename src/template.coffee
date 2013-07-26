@@ -169,6 +169,26 @@ class Gunther.Template
         else
             el.attr name, value
 
+    # Set a style property
+    css: (name, value) ->
+        # Current element
+        el = @current
+
+        # Set up binding for bound properties
+        if value instanceof BoundProperty
+
+            # Set the base value
+            el.css name, value.getValue()
+
+            # On change re-set the attribute
+            value.bind 'change', (newValue) -> el.css name, newValue
+
+            return el
+
+        # Else try to set directly
+        else
+            el.css name, value
+
     # Set up an event handler
     on: (event, handler) -> @current.bind event, handler
 
