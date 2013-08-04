@@ -163,7 +163,7 @@ class Gunther.Template
             el.attr name, value.getValue()
 
             # On change re-set the attribute
-            value.bind 'change', (newValue) -> el.attr name, value
+            value.bind 'change', (newValue) -> el.attr name, value.getValue()
 
         # Else try to set directly
         else
