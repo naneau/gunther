@@ -101,7 +101,7 @@ class Gunther.Template
         if typeof text is 'string'
             el.nodeValue = text
         else
-            # If a function is passed, call it
+            # Get value for child result
             childResult = Gunther.Template.elementValue text, this
 
             # If we get a bound property, we set up the initial value, as well as a change watcher
@@ -109,6 +109,10 @@ class Gunther.Template
                 el.nodeValue = childResult.getValue()
                 childResult.bind 'change', (newVal) ->
                     el.nodeValue = newVal
+
+            # If not, we just set the result as the value
+            else
+                el.nodeValue = childResult
 
         # Append the child node
         @current.append el
