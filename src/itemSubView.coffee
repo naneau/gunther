@@ -7,6 +7,17 @@
 # Gunther.Template, or a Backbone.View instance.
 class ItemSubView extends Backbone.View
 
+    # Remove element
+    @remove: (element) -> ($ element).remove()
+
+    # Default event handlers
+    @defaultEvents:
+        preRemove: () -> null
+        postRemove: () -> null
+
+        preInsert: () -> null
+        postInsert: () -> null
+
     # ID Generator
     @generator: new Gunther.IDGenerator
 
@@ -31,6 +42,12 @@ class ItemSubView extends Backbone.View
 
         # View/Template generator
         @generator = options.generator
+
+        # Events hash
+        @events = _.extend ItemSubView.defaultEvents, (if options.events? then options.events else {})
+
+        # DOM element remover
+        @remove = if options.remove? then options.remove else ItemSubView.remove
 
         # Hash of items that have been rendered
         @renderedItems = {}
@@ -69,10 +86,28 @@ class ItemSubView extends Backbone.View
         # Guard, we may be removed before our own 'add' event fired
         return if not item[@key]?
 
+        # Item is either a Backbone view
         if item[@key] instanceof Backbone.View
+
+            # Pre-remove event
+            @events.preRemove item[@key]
+
+            # Call Backbone View's remove function
             item[@key].remove()
+
+            # Post remove event
+            do @events.postRemove
+
+        # Or it's a DOM element
         else
-            item[@elementKey].remove()
+            # Pre-remove event
+            @events.preRemove item[@elementKey]
+
+            # Remove the item
+            @remove item[@elementKey]
+
+            # Post remove event
+            do @events.postRemove
 
         # Remove the item from our hash of items we rendered
         delete @renderedItems[item.cid]
@@ -96,11 +131,17 @@ class ItemSubView extends Backbone.View
         else
             throw new Error 'Generator must return either a Gunther.Template or a Backbone.View instance'
 
+        # Pre-insert event
+        @events.preInsert item[@elementKey], @$el
+
         # Append the results
         if @prepend
             @$el.prepend item[@elementKey]
         else
             @$el.append item[@elementKey]
+
+        # Post-insert event
+        @events.postInsert item[@elementKey], @$el
 
         # Set up a hash with all rendered items
         @renderedItems[item.cid] = item
