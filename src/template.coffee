@@ -57,7 +57,7 @@ class Gunther.Template
     render: (args...) ->
 
         # Set up a root element, its children will be transferred
-        @root = $('<div />')
+        @root = $ '<div />'
 
         # Current element, starts out as the root element, but will change in the tree
         @current = @root
@@ -154,7 +154,7 @@ class Gunther.Template
 
         null
 
-    # Set a property
+    # Set an attribute
     attribute: (name, value, args...) ->
 
         # Current element
@@ -173,8 +173,31 @@ class Gunther.Template
         else
             el.attr name, value
 
+    # Set a property (note this differs from attributes, as per jQuery's API)
+    property: (name, value, args...) ->
+
+        # Current element
+        el = @current
+
+        # Set up binding for bound properties
+        if value instanceof BoundProperty
+
+            # Set the base value
+            el.prop name, value.getValue()
+
+            # On change re-set the property
+            value.bind 'change', (newValue) -> el.prop name, value.getValue()
+
+        # Else try to set directly
+        else
+            el.prop name, value
+
     # Set a style property
     css: (name, value) ->
+
+        # When hash is passed, run each item through @css
+        return (@css realName, value for realName, value of name) if name instanceof Object
+
         # Current element
         el = @current
 
@@ -193,8 +216,14 @@ class Gunther.Template
         else
             el.css name, value
 
-    # Set up an event handler
+    # Set up an event handler for DOM events
     on: (event, handler) -> @current.bind event, handler
+
+    # Bind model events
+    onModel: (model, event, handler) ->
+        current = @current
+
+        model.on event, (args...) -> handler.apply this, [current].concat args
 
     # Append an element
     append: (element) ->
@@ -241,6 +270,9 @@ class Gunther.Template
     # Attribute
     a: (args...) -> @attribute.apply this, args
     attr: (args...) -> @attribute.apply this, args
+
+    # Property
+    prop: (args...) -> @attribute.apply this, args
 
     # Partial
     p: (args...) -> @partial.apply this, args

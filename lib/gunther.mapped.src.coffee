@@ -131,6 +131,17 @@ _.extend BoundProperty.prototype, Backbone.Events
 # Gunther.Template, or a Backbone.View instance.
 class ItemSubView extends Backbone.View
 
+    # Remove element
+    @remove: (element) -> ($ element).remove()
+
+    # Default event handlers
+    @defaultEvents:
+        preRemove: () -> null
+        postRemove: () -> null
+
+        preInsert: () -> null
+        postInsert: () -> null
+
     # ID Generator
     @generator: new Gunther.IDGenerator
 
@@ -155,6 +166,12 @@ class ItemSubView extends Backbone.View
 
         # View/Template generator
         @generator = options.generator
+
+        # Events hash
+        @events = _.extend ItemSubView.defaultEvents, (if options.events? then options.events else {})
+
+        # DOM element remover
+        @remove = if options.remove? then options.remove else ItemSubView.remove
 
         # Hash of items that have been rendered
         @renderedItems = {}
@@ -193,10 +210,28 @@ class ItemSubView extends Backbone.View
         # Guard, we may be removed before our own 'add' event fired
         return if not item[@key]?
 
+        # Item is either a Backbone view
         if item[@key] instanceof Backbone.View
+
+            # Pre-remove event
+            @events.preRemove item[@key]
+
+            # Call Backbone View's remove function
             item[@key].remove()
+
+            # Post remove event
+            do @events.postRemove
+
+        # Or it's a DOM element
         else
-            item[@elementKey].remove()
+            # Pre-remove event
+            @events.preRemove item[@elementKey]
+
+            # Remove the item
+            @remove item[@elementKey]
+
+            # Post remove event
+            do @events.postRemove
 
         # Remove the item from our hash of items we rendered
         delete @renderedItems[item.cid]
@@ -220,11 +255,17 @@ class ItemSubView extends Backbone.View
         else
             throw new Error 'Generator must return either a Gunther.Template or a Backbone.View instance'
 
+        # Pre-insert event
+        @events.preInsert item[@elementKey], @$el
+
         # Append the results
         if @prepend
             @$el.prepend item[@elementKey]
         else
             @$el.append item[@elementKey]
+
+        # Post-insert event
+        @events.postInsert item[@elementKey], @$el
 
         # Set up a hash with all rendered items
         @renderedItems[item.cid] = item
@@ -294,7 +335,7 @@ class Gunther.Template
     render: (args...) ->
 
         # Set up a root element, its children will be transferred
-        @root = $('<div />')
+        @root = $ '<div />'
 
         # Current element, starts out as the root element, but will change in the tree
         @current = @root
@@ -391,7 +432,7 @@ class Gunther.Template
 
         null
 
-    # Set a property
+    # Set an attribute
     attribute: (name, value, args...) ->
 
         # Current element
@@ -410,8 +451,31 @@ class Gunther.Template
         else
             el.attr name, value
 
+    # Set a property (note this differs from attributes, as per jQuery's API)
+    property: (name, value, args...) ->
+
+        # Current element
+        el = @current
+
+        # Set up binding for bound properties
+        if value instanceof BoundProperty
+
+            # Set the base value
+            el.prop name, value.getValue()
+
+            # On change re-set the property
+            value.bind 'change', (newValue) -> el.prop name, value.getValue()
+
+        # Else try to set directly
+        else
+            el.prop name, value
+
     # Set a style property
     css: (name, value) ->
+
+        # When hash is passed, run each item through @css
+        return (@css realName, value for realName, value of name) if name instanceof Object
+
         # Current element
         el = @current
 
@@ -430,8 +494,14 @@ class Gunther.Template
         else
             el.css name, value
 
-    # Set up an event handler
+    # Set up an event handler for DOM events
     on: (event, handler) -> @current.bind event, handler
+
+    # Bind model events
+    onModel: (model, event, handler) ->
+        current = @current
+
+        model.on event, (args...) -> handler.apply this, [current].concat args
 
     # Append an element
     append: (element) ->
@@ -478,6 +548,9 @@ class Gunther.Template
     # Attribute
     a: (args...) -> @attribute.apply this, args
     attr: (args...) -> @attribute.apply this, args
+
+    # Property
+    prop: (args...) -> @attribute.apply this, args
 
     # Partial
     p: (args...) -> @partial.apply this, args
