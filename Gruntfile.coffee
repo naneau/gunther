@@ -2,7 +2,8 @@ module.exports = (grunt) ->
 
     buildOrder = ['src/root.coffee', 'src/helper.coffee',
         'src/idGenerator.coffee', 'src/boundProperty.coffee',
-        'src/itemSubView.coffee', 'src/template.coffee']
+        'src/boundModel.coffee', 'src/itemSubView.coffee',
+        'src/template.coffee']
 
     # Project configuration.
     grunt.initConfig

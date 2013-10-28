@@ -26,8 +26,8 @@ class Gunther.Template
         # If the child generator returns a string, we have to append it as a text element to the current element
         el.append document.createTextNode childResult if typeof childResult isnt 'object'
 
-        # If we get a bound property, we set up the initial value, as well as a change watcher
-        if childResult instanceof BoundProperty
+        # If we get a bound property or model, we set up the initial value, as well as a change watcher
+        if childResult instanceof BoundProperty or childResult instanceof BoundModel
 
             # Initial generated value
             childResult.getValueInEl el
@@ -138,8 +138,8 @@ class Gunther.Template
         if typeof lastArgument is 'function'
             Gunther.Template.generateChildren el, args.pop(), this
 
-        # Bound property passed?
-        else if lastArgument instanceof BoundProperty
+        # Bound property or model passed?
+        else if lastArgument instanceof BoundProperty or lastArgument instanceof BoundModel
             Gunther.Template.generateChildren el, args.pop(), this
 
         # If we get passed a string as last value, set it as the node value
@@ -255,6 +255,9 @@ class Gunther.Template
 
     # Bind to a property of a model
     bind: (args...) -> new BoundProperty args...
+
+    # Bound model
+    bindModel: (args...) -> new BoundModel args...
 
     # Set up a subview for every item in the collection
     itemSubView: (options) -> new ItemSubView options
