@@ -135,11 +135,12 @@ class BoundModel
         @model.bind "change:#{@propertyName}", (parent) =>
 
             model = parent.get @propertyName
+
             # No change
-            return if model.cid is @currentCid
+            return if model? and model.cid is @currentCid
 
             # New current CID
-            @currentCid = model.cid
+            if model? then @currentCid = model.cid else @currentCid = null
 
             # Trigger change
             @trigger 'change', model
@@ -522,6 +523,29 @@ class Gunther.Template
         else
             el.css name, value
 
+    # Toggle a class
+    toggleClass: (className, model, properties, toggle) ->
+
+        # Make sure we get an array of props
+        properties = [].concat properties
+
+        # When no toggle is passed simply use a property value
+        unless toggle instanceof Function then toggle = (value) -> value
+
+        # Track the element
+        element = @current
+
+        # Perform the class toggle
+        performToggle = (model, value) ->
+            ($ element).toggleClass className, toggle value
+
+        # For every property in the list
+        for property in properties
+
+            model.on "change:#{property}", performToggle
+
+            performToggle model, model.get property
+
     # Set up an event handler for DOM events
     on: (event, handler) -> @current.bind event, handler
 
@@ -581,7 +605,10 @@ class Gunther.Template
     attr: (args...) -> @attribute.apply this, args
 
     # Property
-    prop: (args...) -> @attribute.apply this, args
+    prop: (args...) -> @property.apply this, args
+
+    # Shorthand for class
+    class: (className) -> @attribute 'class', className
 
     # Partial
     p: (args...) -> @partial.apply this, args

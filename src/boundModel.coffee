@@ -11,11 +11,12 @@ class BoundModel
         @model.bind "change:#{@propertyName}", (parent) =>
 
             model = parent.get @propertyName
+
             # No change
-            return if model.cid is @currentCid
+            return if model? and model.cid is @currentCid
 
             # New current CID
-            @currentCid = model.cid
+            if model? then @currentCid = model.cid else @currentCid = null
 
             # Trigger change
             @trigger 'change', model
