@@ -540,6 +540,37 @@ class Gunther.Template
         else
             el.css name, value
 
+    # Show/hide an element based on a boolean property
+    show: (model, properties, resolver) ->
+
+        # Hold on to current element
+        element = @current
+
+        # Initialize resolver when not passed
+        (resolver = (value) -> value) unless resolver?
+
+        # The actual show method
+        show = (element, shown) -> if shown then do ($ element).show else do ($ element).hide
+
+        for property in [].concat properties
+            do (property) =>
+
+                # Track changes
+                model.on "change:#{property}", (model) ->
+                    show element, resolver model.get property
+
+                # Initial show/hide
+                show element, resolver model.get property
+
+    # Hide/show an element based on a boolean property
+    # This is simply show() inverted
+    hide: (model, properties, resolver) ->
+
+        # Initialize resolver when not passed
+        (resolver = (value) -> value) unless resolver?
+
+        @show model, properties, (value) -> not resolver value
+
     # Toggle a class
     toggleClass: (className, model, properties, toggle) ->
 
