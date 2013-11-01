@@ -4,6 +4,10 @@ class BoundModel
     # Constructor
     constructor: (@model, @propertyName, @template) ->
 
+        # If we are passed a function, that isn't a template, make it a template
+        if @template instanceof Function and @template not instanceof Gunther.Template
+            @template = new Gunther.Template @template
+
         # Store the current CID
         @currentCid = @model.cid
 

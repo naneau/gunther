@@ -128,6 +128,10 @@ class BoundModel
     # Constructor
     constructor: (@model, @propertyName, @template) ->
 
+        # If we are passed a function, that isn't a template, make it a template
+        if @template instanceof Function and @template not instanceof Gunther.Template
+            @template = new Gunther.Template @template
+
         # Store the current CID
         @currentCid = @model.cid
 
@@ -461,6 +465,9 @@ class Gunther.Template
 
         null
 
+    # Set up an element which is bound to a model's property
+    boundElement: (args...) -> @element (do args.shift), new BoundModel args...
+
     # Set an attribute
     attribute: (name, value, args...) ->
 
@@ -480,6 +487,11 @@ class Gunther.Template
         else
             el.attr name, value
 
+    # Add up an attribute which is "bound"
+    # Pass it the attributes name, the model, the property, and optionally a
+    # value generating function
+    boundAttribute: (args...) -> @attribute (do args.shift), new BoundProperty args...
+
     # Set a property (note this differs from attributes, as per jQuery's API)
     property: (name, value, args...) ->
 
@@ -498,6 +510,11 @@ class Gunther.Template
         # Else try to set directly
         else
             el.prop name, value
+
+    # Add up a property which is "bound"
+    # Pass it the property's name, the model, the property, and optionally a
+    # value generating function
+    boundProperty: (args...) -> @property (do args.shift), new BoundProperty args...
 
     # Set a style property
     css: (name, value) ->
@@ -549,12 +566,6 @@ class Gunther.Template
     # Set up an event handler for DOM events
     on: (event, handler) -> @current.bind event, handler
 
-    # Bind model events
-    onModel: (model, event, handler) ->
-        current = @current
-
-        model.on event, (args...) -> handler.apply this, [current].concat args
-
     # Append an element
     append: (element) ->
         if element instanceof Backbone.View
@@ -583,17 +594,20 @@ class Gunther.Template
 
         @subTemplate.apply this, [template].concat args
 
-    # Bind to a property of a model
+    # Bind an attribute or property to a property of a model
     bind: (args...) -> new BoundProperty args...
 
-    # Bound model
-    bindModel: (args...) -> new BoundModel args...
+    # Register a change handler for a model
+    onModel: (model, event, handler) ->
+        current = @current
+
+        model.on event, (args...) -> handler.apply this, [current].concat args
 
     # Set up a subview for every item in the collection
     itemSubView: (options) -> new ItemSubView options
 
     # Aliases for shorter notation
-    #
+
     # Alias for element
     e: (tagName, args...) -> @element tagName, args...
 
@@ -601,8 +615,8 @@ class Gunther.Template
     t: (args...) -> @text args...
 
     # Attribute
-    a: (args...) -> @attribute.apply this, args
     attr: (args...) -> @attribute.apply this, args
+    a: (args...) -> @attribute.apply this, args
 
     # Property
     prop: (args...) -> @property.apply this, args
