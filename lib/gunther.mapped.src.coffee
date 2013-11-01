@@ -206,6 +206,10 @@ class ItemSubView extends Backbone.View
         # DOM element remover
         @remove = if options.remove? then options.remove else ItemSubView.remove
 
+        # Odd/Even classes
+        @evenClass = if options.evenClass? then options.evenClass
+        @oddClass = if options.oddClass? then options.oddClass
+
         # Hash of items that have been rendered
         @renderedItems = {}
 
@@ -290,6 +294,11 @@ class ItemSubView extends Backbone.View
 
         # Pre-insert event
         @events.preInsert item[@elementKey], @$el
+
+        if (@model.indexOf item) % 2 is 0
+            item[@elementKey].addClass @evenClass
+        else
+            item[@elementKey].addClass @oddClass
 
         # Append the results
         if @prepend
