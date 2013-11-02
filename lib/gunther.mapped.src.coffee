@@ -606,6 +606,13 @@ class Gunther.Template
     # Set up an event handler for DOM events
     on: (event, handler) -> @current.bind event, handler
 
+    # A "halted" on, that has no propagation (and no default)
+    haltedOn: (event, handler) -> @current.bind event, (event) ->
+        do event.stopPropagation
+        do event.preventDefault
+
+        handler event
+
     # Append an element
     append: (element) ->
         if element instanceof Backbone.View
