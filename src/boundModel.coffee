@@ -2,7 +2,10 @@
 class BoundModel
 
     # Constructor
-    constructor: (@model, @propertyName, @template) ->
+    constructor: (@model, @propertyName, templateAndArgs...) ->
+
+        @template = do templateAndArgs.pop
+        @args = templateAndArgs
 
         # If we are passed a function, that isn't a template, make it a template
         if @template instanceof Function and @template not instanceof Gunther.Template
@@ -26,7 +29,8 @@ class BoundModel
             @trigger 'change', model
 
     # Get value into a DOM element
-    getValueInEl: (el) -> @template.renderInto el, @model.get @propertyName
+    getValueInEl: (el) ->
+        @template.renderInto.apply @template, [].concat el, (@model.get @propertyName), @args
 
 # BoundModel is an EventEmitter... (why can't I just extend from Backbone.Events?)
 _.extend BoundModel.prototype, Backbone.Events

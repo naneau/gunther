@@ -229,6 +229,9 @@ class Gunther.Template
         else
             el.css name, value
 
+    # Bound CSS property
+    boundCss: (args...) -> @css (do args.shift), new BoundProperty args...
+
     # Show/hide an element based on a boolean property
     show: (model, properties, resolver) ->
 

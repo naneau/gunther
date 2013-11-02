@@ -126,7 +126,10 @@ _.extend BoundProperty.prototype, Backbone.Events
 class BoundModel
 
     # Constructor
-    constructor: (@model, @propertyName, @template) ->
+    constructor: (@model, @propertyName, templateAndArgs...) ->
+
+        @template = do templateAndArgs.pop
+        @args = templateAndArgs
 
         # If we are passed a function, that isn't a template, make it a template
         if @template instanceof Function and @template not instanceof Gunther.Template
@@ -150,7 +153,8 @@ class BoundModel
             @trigger 'change', model
 
     # Get value into a DOM element
-    getValueInEl: (el) -> @template.renderInto el, @model.get @propertyName
+    getValueInEl: (el) ->
+        @template.renderInto.apply @template, [].concat el, (@model.get @propertyName), @args
 
 # BoundModel is an EventEmitter... (why can't I just extend from Backbone.Events?)
 _.extend BoundModel.prototype, Backbone.Events
@@ -548,6 +552,9 @@ class Gunther.Template
         # Else try to set directly
         else
             el.css name, value
+
+    # Bound CSS property
+    boundCss: (args...) -> @css (do args.shift), new BoundProperty args...
 
     # Show/hide an element based on a boolean property
     show: (model, properties, resolver) ->
