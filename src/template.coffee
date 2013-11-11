@@ -66,7 +66,7 @@ class Gunther.Template
         @fn.apply this, args
 
         # Add all children of root to the element we're supposed to render into
-        children = @root.children()
+        children = @root.contents()
 
         # Parse dom with the DOM parsers
         for domParser in Gunther.Template.domParsers
