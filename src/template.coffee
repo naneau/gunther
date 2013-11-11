@@ -117,6 +117,12 @@ class Gunther.Template
         # Append the child node
         @current.append el
 
+    # Bound text
+    boundText: (args...) -> @text new BoundProperty args...
+
+    # Spaced text
+    spacedText: (text) -> @text " #{text} "
+
     # Create a child to @current, recurse and add children to it, etc.
     element: (tagName, args...) ->
 
@@ -334,7 +340,10 @@ class Gunther.Template
         model.on event, (args...) -> handler.apply this, [current].concat args
 
     # Set up a subview for every item in the collection
-    itemSubView: (options) -> new ItemSubView options
+    itemSubView: (options, view = null) -> new ItemSubView options, view
+
+    # Create a list
+    list: (element, options, view = null) -> @element element, -> new ItemSubView options, view
 
     # Aliases for shorter notation
 

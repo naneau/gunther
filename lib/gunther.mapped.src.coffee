@@ -192,7 +192,15 @@ class ItemSubView extends Backbone.View
         parentElement.append item for item in items
 
     # Constructor
-    initialize: (options) ->
+    initialize: (options, generator) ->
+
+        # Alias when given two params (model and the generator)
+        if options instanceof Backbone.Collection
+            @model = options
+
+            options =
+                model: options
+                generator: generator
 
         # Identifiers to store view/dom element under
         @key = "_subview-#{ItemSubView.generator.generate()}"
@@ -216,6 +224,9 @@ class ItemSubView extends Backbone.View
 
         # Hash of items that have been rendered
         @renderedItems = {}
+
+        # Alias for "collection"
+        @model = if options.collection? then options.collection else @model
 
         # Init the items
         @model.each (item) => @initItem item
@@ -279,7 +290,10 @@ class ItemSubView extends Backbone.View
 
     # Init the view in the item
     initItem: (item) ->
-        item[@key] = @generator item
+        if typeof @generator is 'function'
+            item[@key] = @generator item
+        else
+            item[@key] = @generator
 
     # Render a single item
     renderItem: (item) ->
@@ -440,6 +454,12 @@ class Gunther.Template
 
         # Append the child node
         @current.append el
+
+    # Bound text
+    boundText: (args...) -> @text new BoundProperty args...
+
+    # Spaced text
+    spacedText: (text) -> @text " #{text} "
 
     # Create a child to @current, recurse and add children to it, etc.
     element: (tagName, args...) ->
@@ -658,7 +678,10 @@ class Gunther.Template
         model.on event, (args...) -> handler.apply this, [current].concat args
 
     # Set up a subview for every item in the collection
-    itemSubView: (options) -> new ItemSubView options
+    itemSubView: (options, view = null) -> new ItemSubView options, view
+
+    # Create a list
+    list: (element, options, view = null) -> @element element, -> new ItemSubView options, view
 
     # Aliases for shorter notation
 
