@@ -5,7 +5,7 @@ class Gunther.Helper
     @createHtmlElement: (description) ->
 
         # Description the string into relevant tokens
-        tokens = description.split /(?=\.)|\[.+\=.+\]|(?=#)/
+        tokens = _.filter (description.split /(?=\.)|(\[.+\=.+\])|(?=#)/), (t) -> t?
 
         # Make sure we get at least one token
         throw new Error "Invalid element description #{description}" unless tokens.length >= 1
