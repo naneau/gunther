@@ -3,8 +3,15 @@ class Gunther.Helper
     #
     # Accepts simple class/id descriptors too, in the form of div.foo/div#foo
     @createHtmlElement: (description) ->
+
+        # Description the string into relevant tokens
+        tokens = description.split /(?=\.)|(?=#)|(?=\[)/
+
         # Tag name to create
-        tagName = (description.match /([a-z0-9]+)([\.|\#]?)/i)[1]
+        tagName = tokens[0]
+
+        # Sanity check for tag name
+        throw new Error "Invalid tag name #{tagName}" unless /^[a-zA-Z0-9]+$/.test tagName
 
         # Create the element
         element = $(document.createElement tagName)
@@ -12,19 +19,27 @@ class Gunther.Helper
         # Return if element name matches description (avoid further regexing)
         return element if tagName is description
 
-        # Identifier (div#foo)
-        id = description.match /\#(-?[_a-zA-Z]+[_a-zA-Z0-9-]*)+/i
-        element.attr 'id', (id[0].substring 1) if id?
+        # Parse remainder of tokens
+        for token in tokens
 
-        # Any and all classes in the description (div.foo.bar)
-        classes = description.match /\.(-?[_a-zA-Z]+[_a-zA-Z0-9-]*)/ig
+            # ID
+            if token[0] is '#'
+                element.attr 'id', token.substr 1
 
-        # Join up classes
-        join = (memo, val) -> memo + ' ' + val.substring 1
-        classNameFull = $.trim  _.reduce classes, join, ''
+            # Class
+            else if token[0] is '.'
+                element.attr 'class', (element.attr 'class') + ' ' + token.substr 1
 
-        # Set the class attr
-        element.attr 'class', classNameFull
+            # Attribute, like [foo=bar]
+            else if token[0] is '[' and token[token.length = 1] = ']'
+
+                # Split into parts
+                attributeDefinition = ((token.substr 1).substr 0, token.length - 2).split '='
+
+                # Make sure we get two parts as required
+                continue if attributeDefinition.length isnt 2
+
+                element.attr attributeDefinition[0], attributeDefinition[1]
 
         # Return the element
         element
