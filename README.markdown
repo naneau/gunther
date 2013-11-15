@@ -4,120 +4,123 @@
 
 ## Introduction
 
-Gunther is a view and templating language for
-[Backbone](http://backbonejs.org/). The goal is to provide an expressive, yet
-powerful way to create views, based on Backbone Models and Collections.
+Gunther is a view and templating tool for
+[Backbone](http://backbonejs.org/). Its goal is to provide a powerful and
+flexible way to create views, based on Backbone Models and Collections,
+supporting live bindings and expressive syntax.
 
-Gunther is never compiled or interpreted. The templates are "live" functions.
-You will not lose scope, and you can maintain the templates directly
-inside/alongside your views. Any function you can call in your app's code you
-can call from a template.
+Gunther's templates are never compiled or interpreted. The templates are "live"
+functions, that retain their parent scope. Because they are code based, not
+string based, they are easily maintained with the rest of application code.
 
 ### Concise
 
 Template are short, to the point, and easy to read. Gunther is written to make
-maximum use [CoffeeScript's](http://coffeescript.org/) notation.
+maximum use [CoffeeScript's](http://coffeescript.org/) notation, combined with
+CSS inspired element creation.
 
 ```coffeescript
 template = new Gunther.Template ->
 
-    # Add an element, and set it's contents
+    # Add an element, and its text content
     @element 'p', 'This is some text'
 
-    # @e is an alias for @element, you can pass classes and ids directly to it
-    @e 'p.has-a-class', ->
+    # An element with an ID
+    @element 'p#has-an-id'
 
-        # Nest
-        @e 'a', ->
-            # Set attributes
-            @attr 'href', '/something/fun'
-            # Set text
-            @text 'This is a link'
+    # Add an element with a class
+    @element 'p.has-a-class', ->
+
+        # A link, inside of the paragraph
+        @element 'a[href=/something/fun]', -> 'This is a link'
 ```
 
-### Functional
-
-All properties of elements can be expressed as a CoffeeScript function.
+### Expressive syntax
 
 ```coffeescript
 template = new Gunther.Template (backboneModel) ->
 
-    @e 'p', ->
+    @element 'p', ->
 
-        # Set an attribute
-        @attr 'class', ->
-            if (backboneModel.get 'someProperty') is 'something'
-                'foo'
-            else
-                'bar'
+        # Add classes and an ID to an element
+        @element 'div#foo.bar.baz'
+
+        # Set properties of elements
+        @element 'input[type=checkbox]:checked'
 
         # Set some text
-        @text ->
-            text = ''
-            text = text + x + ' ' for x in [0..10]
-            text
+        @text -> "I can count to 10! #{implode ',' [1..10]}"
 
-        # Handle an event, directly from your template
+        # Handle events inline (using the scope of the template)
         @on 'click', (e) -> backboneModel.set foo: 'bar'
 ```
 
-### Centralized And Live
+### Live Bindings
 
-Because all properties can be expressed as functions, there is no need to write
-logic *around* your views. You can simply use properties from your models
-directly in your views, through bindings. No more wrapping functions and jQuery
-searching for elements.
+Gunther can bind any model attribute to DOM elements, classes, attributes and
+properties, allowing for live updating views.
 
 ```coffeescript
 template = new Gunther.Template (backboneModel) ->
 
-    @e 'p', ->
-        # Set a "color" property in your model and make it the background color
-        # of an element
-        @style 'background-color', @bind backboneModel, 'color', ->
-            backboneModel.get 'color'
+    @element 'p', ->
 
-        # Bind some text to a property
-        @text, @bind backboneModel, 'foo', ->
-            if (backboneModel.get 'foo') is 'bar'
-                'This is the text for bar'
-            else
-                'While this is the text for *not* bar'
+        # Toggle a class depending on a model's attribute
+        @toggleClass 'foo', backboneModel, 'foo'
+
+        # Toggle a class using a generator
+        @toggleClass 'bar', backboneModel, 'bar', () -> (backboneModel.get 'bar') is 'bar'
+
+        # Bind text to a model's attribute
+        @boundText backboneModel, 'foo'
+
+        # Bind DOM attributes to a model
+        @boundAttribute 'src' backboneModel, 'source'
+
+        # Bind DOM properties to a model
+        @boundProperty 'checked' backboneModel, 'selected'
+
+        # Change a style property with a model's attribute
+        @boundCss 'color', backboneModel, 'foo', () ->
+            if (backboneModel.get 'foo') is 'foo' then '#FF0000' else '#0000FF'
 ```
 
-### Extensible
+### List views
 
-Gunther supports partials, so it's easy to create re-usable components. It is
-also possible to call include another template from inside template code.
+List views allow you to set up repeated views for items from a collection. The
+list is automatically pruned and sorted when the underlying collection is.
+
+```coffeescript
+template = new Gunther.Tempalte (collection) ->
+    @list 'ul', collection, new Gunther.Template (item) ->
+        @element 'li', -> item.get 'foo'
+```
+
+### Extensibility
+
+Gunther supports partials, so it's easy to create re-usable components.
+Templates can also be composed out of sub-templates.
 
 ```coffeescript
 
-# Register a partial
+# A "fancy" paragraph partial
 Gunther.addPartial 'fancyParagraph', (text) ->
-    @e 'p.fancy', -> text
+    @element 'p.fancy', -> text
+
+# A button partial, complete with handler
+Gunther.addPartial 'button', (text, handler) ->
+    @element 'button', ->
+        @text text
+        @on 'click', handler
 
 template = new Gunther.Template (backboneCollection) ->
 
     # Fancy paragraph
-    @partial 'fancyParagraph', 'this is the text for the paragraph'
+    @fancyParagraph 'this is the text for the paragraph'
 
-    # Subtemplate
-    @e 'p', -> @subTemplate someOtherTemplate
+    # Button
+    @button 'Click me!', () -> alert 'I was clicked!'
 
-    # SubViews, for easy repetition
-    # Subviews are bound to the collection's items, and will update accordingly
-    @e 'ul', -> @itemSubView
-
-        # Collection to use
-        model: backboneCollection
-
-        # Generator for the subview, creates a Gunther template
-        # This template will be rendered for *every* item in the collection
-        generator: (item) -> new Gunther.Template ->
-            @e 'li', -> item.get 'foo'
-
+    # Render another template inside this one
+    @subTemplate someOtherTemplate
 ```
-
-## More
-
-See the [examples](https://github.com/naneau/gunther/tree/master/examples).
