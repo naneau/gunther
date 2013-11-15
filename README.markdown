@@ -1,5 +1,7 @@
 # Gunther
 
+[![Build Status](https://travis-ci.org/naneau/gunther.png?branch=master)](https://travis-ci.org/naneau/gunther)
+
 ## Introduction
 
 Gunther is a view and templating language for
