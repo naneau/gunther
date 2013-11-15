@@ -30,7 +30,8 @@ class Gunther.Helper
 
             # Class
             else if token[0] is '.'
-                element.attr 'class', (element.attr 'class') + ' ' + token.substr 1
+                previousClass = if (element.attr 'class')? then (element.attr 'class') + ' ' else ''
+                element.attr 'class',  previousClass + token.substr 1
 
             # Property, like :checked
             else if token[0] is ':'
