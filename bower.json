@@ -1,0 +1,30 @@
+{
+  "name": "gunther",
+  "version": "0.0.0",
+  "homepage": "https://github.com/naneau/gunther",
+  "authors": [
+    "Maurice Fonk <git@naneau.net>"
+  ],
+  "description": "Gunther, a Backbone.js templating drop-in",
+  "main": "lib/gunther.js",
+  "keywords": [
+    "Backbone.js",
+    "Templating",
+    "Template",
+    "CoffeeScript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "backbone": "~1.1.0",
+    "underscore": "~1.5.2",
+    "jquery": "~2.0.3",
+    "qunit": "~1.12.0"
+  }
+}
