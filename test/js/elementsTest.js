@@ -1,6 +1,6 @@
 (function() {
   test('Elements', function() {
-    var elem;
+    var elem, wrapper;
     elem = singleElement('div', 'div');
     equal(elem[0].tagName, 'DIV', 'Element should render as correct type');
     equal(elem.contents().length, 0, 'Empty element should be empty');
@@ -14,7 +14,16 @@
     });
     equal(elem[0].tagName, 'DIV', 'Element should render as correct type');
     equal(elem.contents().length, 1, 'Non empty element should be not empty');
-    return equal(elem.contents().first().text(), 'foo', 'Text should render inside of an element');
+    equal(elem.contents().first().text(), 'foo', 'Text should render inside of an element');
+    wrapper = renderGunther(new Gunther.Template(function() {
+      this.element('div');
+      this.element('div');
+      return this.element('div');
+    }));
+    equal(wrapper.children().length, 3, 'Root elements should render in correct number');
+    equal(wrapper.children()[0].tagName, 'DIV', 'Element should render as correct type');
+    equal(wrapper.children()[1].tagName, 'DIV', 'Element should render as correct type');
+    return equal(wrapper.children()[2].tagName, 'DIV', 'Element should render as correct type');
   });
 
   test('Elements, children', function() {

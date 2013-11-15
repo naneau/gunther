@@ -1,3 +1,4 @@
+# Elements rendering, core
 test 'Elements', ->
 
     elem = singleElement 'div', 'div'
@@ -12,6 +13,17 @@ test 'Elements', ->
     equal elem[0].tagName, 'DIV', 'Element should render as correct type'
     equal elem.contents().length, 1, 'Non empty element should be not empty'
     equal elem.contents().first().text(), 'foo', 'Text should render inside of an element'
+
+    # Three div's in a row, without a root element
+    wrapper = renderGunther new Gunther.Template ->
+        @element 'div'
+        @element 'div'
+        @element 'div'
+
+    equal wrapper.children().length, 3, 'Root elements should render in correct number'
+    equal wrapper.children()[0].tagName, 'DIV', 'Element should render as correct type'
+    equal wrapper.children()[1].tagName, 'DIV', 'Element should render as correct type'
+    equal wrapper.children()[2].tagName, 'DIV', 'Element should render as correct type'
 
 test 'Elements, children', ->
     elem = singleElement 'div', ->
