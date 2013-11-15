@@ -63,7 +63,7 @@ module.exports = (grunt) ->
 
             # Gunther source
             source:
-                files: ['src/*.coffee', 'karma:watched:run']
+                files: ['src/*.coffee', 'karma:single']
                 tasks: ['default']
                 options:
                     nospawn: false
@@ -71,7 +71,7 @@ module.exports = (grunt) ->
             # The test coffee sources
             testCoffee:
                 files: ['test/coffee/**/*.coffee']
-                tasks: ['coffee:compileTests', 'karma:watched:run']
+                tasks: ['coffee:compileTests', 'karma:single']
                 options:
                     nospawn: false
 
@@ -88,7 +88,7 @@ module.exports = (grunt) ->
     grunt.registerTask 'test', ['karma:single']
 
     # Development stack, watch for changes and run unit tests
-    grunt.registerTask 'dev', ['karma:watched:start', 'watch']
+    grunt.registerTask 'dev', ['watch']
 
     # Default task
     grunt.registerTask 'default', ['compile', 'test']
