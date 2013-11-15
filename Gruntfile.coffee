@@ -26,6 +26,15 @@ module.exports = (grunt) ->
                 files:
                     'lib/gunther.mapped.js': buildOrder
 
+            # Compile the tests
+            compileTests:
+                expand: true
+                flatten: true
+                cwd: 'test/coffee'
+                src: ['*.coffee']
+                dest: 'test/js'
+                ext: '.js'
+
         # Uglify results
         uglify:
             options:
@@ -35,13 +44,34 @@ module.exports = (grunt) ->
                 src: 'lib/<%= pkg.name %>.js'
                 dest: 'lib/<%= pkg.name %>.min.js'
 
-        # Watch for changes
+        # Tests
+        karma:
+            options:
+                configFile: 'test/karma.conf.coffee'
+
+            # Watched
+            watched:
+                background: true
+
+            # Single karma run using PhantomJS
+            single:
+                singleRun: true
+                browsers: ['PhantomJS']
+
+        # Watch for changes in:
         watch:
 
             # Gunther source
             source:
-                files: ['src/*.coffee']
+                files: ['src/*.coffee', 'karma:watched:run']
                 tasks: ['default']
+                options:
+                    nospawn: false
+
+            # The test coffee sources
+            testCoffee:
+                files: ['test/coffee/**/*.coffee']
+                tasks: ['coffee:compileTests', 'karma:watched:run']
                 options:
                     nospawn: false
 
@@ -49,6 +79,16 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-uglify'
     grunt.loadNpmTasks 'grunt-contrib-watch'
+    grunt.loadNpmTasks 'grunt-karma'
+
+    # Compile task
+    grunt.registerTask 'compile', ['coffee', 'uglify']
+
+    # Run unit tests once
+    grunt.registerTask 'test', ['karma:single']
+
+    # Development stack, watch for changes and run unit tests
+    grunt.registerTask 'dev', ['karma:watched:start', 'watch']
 
     # Default task
-    grunt.registerTask 'default', ['coffee:compileSource', 'coffee:compileSourceWithMap', 'uglify']
+    grunt.registerTask 'default', ['compile', 'test']

@@ -182,6 +182,8 @@ class Gunther.Template
         else
             el.attr name, value
 
+        null
+
     # Add up an attribute which is "bound"
     # Pass it the attributes name, the model, the property, and optionally a
     # value generating function
@@ -205,6 +207,8 @@ class Gunther.Template
         # Else try to set directly
         else
             el.prop name, value
+
+        null
 
     # Add up a property which is "bound"
     # Pass it the property's name, the model, the property, and optionally a
@@ -234,6 +238,8 @@ class Gunther.Template
         # Else try to set directly
         else
             el.css name, value
+
+        null
 
     # Bound CSS property
     boundCss: (args...) -> @css (do args.shift), new BoundProperty args...
@@ -291,6 +297,8 @@ class Gunther.Template
             model.on "change:#{property}", performToggle
 
             performToggle model, model.get property
+
+        null
 
     # Set up an event handler for DOM events
     on: (event, handler) -> @current.bind event, handler

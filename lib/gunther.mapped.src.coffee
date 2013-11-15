@@ -43,7 +43,7 @@ class Gunther.Helper
     @createHtmlElement: (description) ->
 
         # Description the string into relevant tokens
-        tokens = _.filter (description.split /(?=\.)|(\[.+\=.+\])|(?=#)/), (t) -> t?
+        tokens = _.filter (description.split /(?=\.)|(\[.+\=.+\])|(\:[a-z0-9]+)|(?=#)/), (t) -> t?
 
         # Make sure we get at least one token
         throw new Error "Invalid element description #{description}" unless tokens.length >= 1
@@ -69,6 +69,10 @@ class Gunther.Helper
             # Class
             else if token[0] is '.'
                 element.attr 'class', (element.attr 'class') + ' ' + token.substr 1
+
+            # Property, like :checked
+            else if token[0] is ':'
+                element.prop (token.substr 1), true
 
             # Attribute, like [foo=bar]
             else if token[0] is '[' and token[token.length = 1] = ']'
@@ -546,6 +550,8 @@ class Gunther.Template
         else
             el.attr name, value
 
+        null
+
     # Add up an attribute which is "bound"
     # Pass it the attributes name, the model, the property, and optionally a
     # value generating function
@@ -569,6 +575,8 @@ class Gunther.Template
         # Else try to set directly
         else
             el.prop name, value
+
+        null
 
     # Add up a property which is "bound"
     # Pass it the property's name, the model, the property, and optionally a
@@ -598,6 +606,8 @@ class Gunther.Template
         # Else try to set directly
         else
             el.css name, value
+
+        null
 
     # Bound CSS property
     boundCss: (args...) -> @css (do args.shift), new BoundProperty args...
@@ -655,6 +665,8 @@ class Gunther.Template
             model.on "change:#{property}", performToggle
 
             performToggle model, model.get property
+
+        null
 
     # Set up an event handler for DOM events
     on: (event, handler) -> @current.bind event, handler
