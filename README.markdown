@@ -20,39 +20,30 @@ maximum use [CoffeeScript's](http://coffeescript.org/) notation, combined with
 CSS inspired element creation.
 
 ```coffeescript
-template = new Gunther.Template ->
-
-    # Add an element, and its text content
-    @element 'p', 'This is some text'
-
-    # An element with an ID
-    @element 'p#has-an-id'
-
-    # Add an element with a class
-    @element 'p.has-a-class', ->
-
-        # A link, inside of the paragraph
-        @element 'a[href=/something/fun]', -> 'This is a link'
-```
-
-### Expressive syntax
-
-```coffeescript
 template = new Gunther.Template (backboneModel) ->
 
+    # Elements are added using the @element method
+    @element 'p', 'This is some text'
+
+    # The @element method accepts ID's, classes, attributes and properties in
+    # a CSS-like syntax
+    @element 'p#has-an-id'
+    @element 'p.has-a-class'
+    @element 'input[type=checkbox]:checked'
+
+    # IDs, classes, attributes, and properties can be chained
+    @element 'input[type=text]#foo.bar.baz:checked'
+
+    # Children are added functionally
     @element 'p', ->
+        @element 'a[href=linked.html]', -> 'This is a link'
+        @element 'span', -> 'And this is some text in a span'
 
-        # Add classes and an ID to an element
-        @element 'div#foo.bar.baz'
+    # All content can be expressed as functions
+    @text -> "I can count to 10! #{implode ',' [1..10]}"
 
-        # Set properties of elements
-        @element 'input[type=checkbox]:checked'
-
-        # Set some text
-        @text -> "I can count to 10! #{implode ',' [1..10]}"
-
-        # Handle events inline (using the scope of the template)
-        @on 'click', (e) -> backboneModel.set foo: 'bar'
+    # Events can be handled inline, without losing scope
+    @on 'click', (e) -> backboneModel.set foo: 'bar'
 ```
 
 ### Live Bindings
@@ -123,4 +114,30 @@ template = new Gunther.Template (backboneCollection) ->
 
     # Render another template inside this one
     @subTemplate someOtherTemplate
+```
+
+## Rendering
+
+Rendering a template is easy:
+
+```coffeescript
+
+template = new Gunther.Template ->
+    @element 'div', 'This is text from a Gunther template'
+
+template.renderInto $ '#your-element'
+```
+
+Gunther's templates integrate easily with Backbone's views:
+
+```coffeescript
+
+class FooView extends Backbone.View
+
+    # The view's template
+    @template: new Gunther.Template (model) ->
+        @element 'div', -> model.get 'foo'
+
+    # Use the render method to render the template into the view's element
+    render: -> FooView.template.renderInto @$el, @model
 ```
