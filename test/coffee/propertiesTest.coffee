@@ -13,8 +13,7 @@ test 'Properties', ->
 
 test 'Properties, bound', ->
 
-    model = new Backbone.Model
-        foo: false
+    model = new Backbone.Model foo: false
 
     elem = singleElement 'input', model, -> @element 'input[type=checkbox]', ->
         @boundProperty 'checked', model, 'foo'
