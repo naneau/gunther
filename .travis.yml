@@ -1,12 +1,12 @@
 language: node_js
 node_js:
-- '0.10'
+  - "0.10"
 before_install:
-- npm install -g grunt-cli bower
+  - "npm install -g grunt-cli bower"
 before_script:
-- cd test && bower install
+  - "cd test && bower install"
 script:
-- grunt test
+  - "grunt test"
 
 # Deploy to NPM on build success
 deploy:
