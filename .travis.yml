@@ -1,19 +1,17 @@
 language: node_js
 node_js:
-  - "0.10"
+- '0.10'
 before_install:
-  - "npm install -g grunt-cli bower"
+- npm install -g grunt-cli bower
 before_script:
-  - "bower install"
+- bower install
 script:
-  - "grunt test"
-
-# Deploy to NPM on build success
+- grunt test
 deploy:
   provider: npm
   email: npm@naneau.net
   api_key:
-    secure: Au56lGYhPJXFcuN2T8fLfC0YR++8/F25Ka8r87u9fIzmIBspuD+EvGhv1nJ/+qReOxq4eXUUd6IfOe9qtSlL2VQ1PkCZw+30BnzZmlhoyPooPc7DwlhbWc+ZLUGqk3EXV/2QZBeS3DULGwXGzp8U1KRMHZQrOnyz6okUsmpcbws=
+    secure: ZiancrcLVZjxU7cXbW2k+QMlC1g2UaRD3CQhXBays+iVcHYFLOfOxOMZBwwo3E9+MfQ8xzQTv52W1BaYqfMhravbMpXfBIo4ofgGq1yVXoxXmDzpKyzHxguGvB3h8qbYWjKFtHUFkmIpPvUPwvhW/hmc2hcqqZVXXxm6aORSg1s=
   on:
     tags: true
     repo: naneau/gunther
