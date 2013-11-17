@@ -41,6 +41,9 @@ class Gunther.Template
                 # Set the new value
                 childResult.getValueInEl el
 
+        else if childResult instanceof Gunther.SwitchedView
+            do childResult.render
+
         # The child is a new View instance, we set up the proper element and render it
         else if childResult instanceof Backbone.View
 
@@ -77,15 +80,17 @@ class Gunther.Template
 
     # Render into an element
     #
-    # Will return a Backbone.View that can be used/modified to your wishes
+    # This will *append* the elements from the template into the passed DOM element
+    #
+    # It returns the rendered elements
     renderInto: (el, args...) ->
 
-        # Append a child for every element @render returns
-        ($ el).append child for child in @render args...
+        children = @render args...
 
-        # Return a view
-        new Backbone.View
-            el: ($ el)
+        # Append a child for every element @render returns
+        ($ el).append child for child in children
+
+        children
 
     # Add text to the current element
     #

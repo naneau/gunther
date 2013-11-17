@@ -153,7 +153,7 @@ class BoundProperty
 # BoundProperty is an EventEmitter... (why can't I just extend from Backbone.Events?)
 _.extend BoundProperty.prototype, Backbone.Events
 
-# Bound property, a simple wrapper around the events the Backbone models fire
+# Bind a full element to a model's property
 class BoundModel
 
     # Constructor
@@ -163,25 +163,26 @@ class BoundModel
         @args = templateAndArgs
 
         # If we are passed a function, that isn't a template, make it a template
-        if @template instanceof Function and @template not instanceof Gunther.Template
+        if typeof @template is 'function' and @template not instanceof Gunther.Template
             @template = new Gunther.Template @template
 
-        # Store the current CID
-        @currentCid = @model.cid
+        # Store the current value
+        @currentValue = @model.get @propertyName
 
         # Listen to changes
         @model.bind "change:#{@propertyName}", (parent) =>
 
-            model = parent.get @propertyName
+            # The new value
+            newValue = parent.get @propertyName
 
-            # No change
-            return if model? and model.cid is @currentCid
+            # Make sure there's actual change
+            return if newValue is @currentValue
 
-            # New current CID
-            if model? then @currentCid = model.cid else @currentCid = null
+            # Store the current value
+            @currentValue = newValue
 
             # Trigger change
-            @trigger 'change', model
+            @trigger 'change', newValue
 
     # Get value into a DOM element
     getValueInEl: (el) ->
@@ -410,6 +411,9 @@ class Gunther.Template
                 # Set the new value
                 childResult.getValueInEl el
 
+        else if childResult instanceof Gunther.SwitchedView
+            do childResult.render
+
         # The child is a new View instance, we set up the proper element and render it
         else if childResult instanceof Backbone.View
 
@@ -446,15 +450,17 @@ class Gunther.Template
 
     # Render into an element
     #
-    # Will return a Backbone.View that can be used/modified to your wishes
+    # This will *append* the elements from the template into the passed DOM element
+    #
+    # It returns the rendered elements
     renderInto: (el, args...) ->
 
-        # Append a child for every element @render returns
-        ($ el).append child for child in @render args...
+        children = @render args...
 
-        # Return a view
-        new Backbone.View
-            el: ($ el)
+        # Append a child for every element @render returns
+        ($ el).append child for child in children
+
+        children
 
     # Add text to the current element
     #
@@ -742,3 +748,90 @@ class Gunther.Template
 
     # Partial
     p: (args...) -> @partial.apply this, args
+
+# Switched views
+#
+# Set up a switched view
+#@switchView 'div.switched', state, 'toggle', ->
+    #@keep templateKeep, state, (toggle) -> toggle
+    #@switch templateSwitch, state, (toggle) -> not toggle
+    #
+Gunther.Template::switchView = (element, model, properties, generator) ->
+    @element element, ->
+        return new SwitchedView @current, model, properties, generator
+
+class SwitchedView
+    switches: []
+
+    # Constructor
+    #
+    # Expects the parent DOM element, the model/attributes to watch for and a
+    # generator method that sets up the switching
+    constructor: (@parent, @model, @attributeName, generator) ->
+        # Set up change handlers
+        @model.on "change:#{@attributeName}", => do @render
+
+        # Actual specification for the switch
+        generator.apply this, [@model]
+
+    # Decided active switch and render
+    render: ->
+
+        # Make old active switch unactive
+        @active.makeUnActiveIn @parent if @active?
+
+        # Find the new active switch
+        @active = _.find @switches, (viewSwitch) => viewSwitch.isActive @model.get @attributeName
+
+        # Make it active
+        @active.makeActiveIn @parent
+
+    keep: (template, args...) ->
+        @switches.push new ViewSwitch ViewSwitch.KEEP, template, args...
+
+    switch: (template, args...) ->
+        @switches.push new ViewSwitch ViewSwitch.SWITCH, template, args...
+
+# Single switch
+class ViewSwitch
+
+    @KEEP: 'keep'
+    @SWITCH: 'switch'
+
+    isActive: false
+
+    constructor: (@type, @template, args...) ->
+
+        # Switch method
+        @determinator = do args.pop
+
+        # Left over arguments for tempalte
+        @arguments = args
+
+    # Determinate whether this switch is active or not
+    isActive: (value) -> @determinator value
+
+    # Make this ViewSwitch active in a DOM element
+    makeActiveIn: (element) ->
+
+        # If this view has been active before, simply show the hidden elements again
+        if @switchedElements?
+            do @switchedElements.show
+
+        # If not, render the template
+        else
+            @switchedElements = @template.renderInto.apply @template, [element].concat @arguments
+
+    # Make this ViewSwitch unactive
+    makeUnActiveIn: (element) ->
+
+        # If this is a kept switch, hide the elements
+        if @type is ViewSwitch.KEEP
+            do @switchedElements.hide
+
+        # If it's not, destroy them
+        else
+            do @switchedElements.remove
+
+# Export to Gunther scope
+Gunther.SwitchedView = SwitchedView
