@@ -1,4 +1,4 @@
-# Bound property, a simple wrapper around the events the Backbone models fire
+# Bind a full element to a model's property
 class BoundModel
 
     # Constructor
@@ -8,25 +8,26 @@ class BoundModel
         @args = templateAndArgs
 
         # If we are passed a function, that isn't a template, make it a template
-        if @template instanceof Function and @template not instanceof Gunther.Template
+        if typeof @template is 'function' and @template not instanceof Gunther.Template
             @template = new Gunther.Template @template
 
-        # Store the current CID
-        @currentCid = @model.cid
+        # Store the current value
+        @currentValue = @model.get @propertyName
 
         # Listen to changes
         @model.bind "change:#{@propertyName}", (parent) =>
 
-            model = parent.get @propertyName
+            # The new value
+            newValue = parent.get @propertyName
 
-            # No change
-            return if model? and model.cid is @currentCid
+            # Make sure there's actual change
+            return if newValue is @currentValue
 
-            # New current CID
-            if model? then @currentCid = model.cid else @currentCid = null
+            # Store the current value
+            @currentValue = newValue
 
             # Trigger change
-            @trigger 'change', model
+            @trigger 'change', newValue
 
     # Get value into a DOM element
     getValueInEl: (el) ->
