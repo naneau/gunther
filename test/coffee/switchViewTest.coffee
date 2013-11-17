@@ -37,3 +37,10 @@ test 'Switch views', ->
 
     equal (wrapper.find 'div.kept').length, 1, 'Switched view should keep elements'
     equal (wrapper.find 'div.switch').length, 0, 'Switched view should remove "switch" elements'
+
+    # Toggle state back once more
+    state.set 'toggle', false
+
+    equal (wrapper.find 'div.kept').length, 1, 'Switched view should keep elements'
+    ok !(wrapper.find 'div.kept').is(':visible'), 'Switched view should hide elements that it keeps'
+    equal (wrapper.find 'div.switch').length, 1, 'Switched view should render new elements'

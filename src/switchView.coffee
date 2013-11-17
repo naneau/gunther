@@ -82,5 +82,7 @@ class ViewSwitch
         else
             do @switchedElements.remove
 
+            @switchedElements = null
+
 # Export to Gunther scope
 Gunther.SwitchedView = SwitchedView
