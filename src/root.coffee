@@ -34,4 +34,4 @@ else
   { _, Backbone } = window
 
 # Make sure we have underscore.js
-throw 'Underscore.js must be loaded for Gunther to work' if (typeof _) is not 'function'
+throw new Error 'Underscore.js must be loaded for Gunther to work' if (typeof _) is not 'function'
