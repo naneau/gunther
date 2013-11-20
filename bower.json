@@ -1,11 +1,11 @@
 {
-  "name": "gunther",
-  "version": "0.0.19",
-  "homepage": "https://github.com/naneau/gunther",
+  "name": "Gunther",
+  "version": "0.0.20",
+  "homepage": "http://naneau.net/gunther",
   "authors": [
-    "Maurice Fonk <git@naneau.net>"
+    "Maurice Fonk <maurice@naneau.net>"
   ],
-  "description": "Gunther, a Backbone.js templating drop-in",
+  "description": "A Backbone.js templating drop-in with powerful bindings and events",
   "main": "lib/gunther.js",
   "keywords": [
     "Backbone.js",
