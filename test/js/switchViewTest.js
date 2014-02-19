@@ -1,5 +1,7 @@
 (function() {
-  test('Switch views', function() {
+  module('Switch Views');
+
+  test('Switching', function() {
     var state, template, templateKeep, templateSwitch, wrapper;
     templateKeep = new Gunther.Template(function() {
       return this.element('div.kept', function() {

@@ -56,6 +56,7 @@ module.exports = (grunt) ->
       # Single karma run using PhantomJS
       single:
         singleRun: true
+        #browsers: ['Firefox']
         browsers: ['PhantomJS']
 
     # Watch for changes in:
@@ -63,15 +64,15 @@ module.exports = (grunt) ->
 
       # Gunther source
       source:
-        files: ['src/*.coffee', 'karma:single']
-        tasks: ['default']
+        files: ['src/*.coffee']
+        tasks: ['coffee:compileSource', 'coffee:compileSourceWithMap']
         options:
           nospawn: false
 
       # The test coffee sources
       testCoffee:
         files: ['test/coffee/**/*.coffee']
-        tasks: ['coffee:compileTests', 'karma:single']
+        tasks: ['coffee:compileTests']
         options:
           nospawn: false
 

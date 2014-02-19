@@ -50,3 +50,20 @@ class Gunther.Helper
 
     # Return the element
     element
+
+  # Set up an animation frame callback
+  @animationFrame: (callback) ->
+    return @_requestAnimationFrame.call window, callback
+
+  # Browser's requestAnimationFrame
+  @_requestAnimationFrame =
+    window.requestAnimationFrame       ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame    ||
+    window.oRequestAnimationFrame      ||
+    window.msRequestAnimationFrame     ||
+    (callback, element) ->
+      window.setTimeout(
+        -> callback(+new Date()),
+        17 # ~1000/60
+      )

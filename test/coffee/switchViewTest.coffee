@@ -1,4 +1,5 @@
-test 'Switch views', ->
+module 'Switch Views'
+test 'Switching', ->
 
   # Kept template
   templateKeep = new Gunther.Template () ->

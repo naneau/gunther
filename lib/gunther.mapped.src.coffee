@@ -89,6 +89,26 @@ class Gunther.Helper
     # Return the element
     element
 
+  # Set up an animation frame callback
+  @animationFrame: (callback) ->
+    #do callback
+    #return setTimeout callback, 0 # 1000/60
+    #return do callback
+    return @_requestAnimationFrame.call window, callback
+
+  # Browser's requestAnimationFrame
+  @_requestAnimationFrame =
+    window.requestAnimationFrame       ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame    ||
+    window.oRequestAnimationFrame      ||
+    window.msRequestAnimationFrame     ||
+    (callback, element) ->
+      window.setTimeout(
+        -> callback(+new Date()),
+        17 # ~1000/60
+      )
+
 # ID Generator
 class Gunther.IDGenerator
 
@@ -221,7 +241,7 @@ class ItemSubView extends Backbone.View
     items = (item[elementKey].detach() for item in collection.toArray())
 
     # Append again from the top
-    parentElement.append item for item in items
+    parentElement.appendChild item for item in items
 
   # Constructor
   initialize: (options, generator) ->
@@ -260,14 +280,34 @@ class ItemSubView extends Backbone.View
     # Alias for "collection"
     @model = if options.collection? then options.collection else @model
 
-    # Init the items
-    @model.each (item) => @initItem item
 
-    # When an item is added, init and render it
-    @model.bind 'add', (item) => @addItem item
+    do @_initEvents
 
-    # When an item is removed, remove the element, or the view
-    @model.bind 'remove', (item) => @removeItem item
+  # Overloaded setElement() because of lack of @$el in init
+  setElement: (@$el) ->
+
+  # Render the subview
+  render: () ->
+
+    # Initialize all items that exist in the collection already
+    @model.each (item) => @_initItem item
+
+    # Render the items already in the collection
+    @model.each (item) => @_renderItem item
+
+  # Initialize the event listeners
+  _initEvents: () ->
+
+    # Initialize queues
+    @_addItems = []
+    @_removeItems = []
+    @_checkingQueue = false
+
+    # When an item is added, init it and add render to the queue
+    @model.bind 'add', (item) => @_addItemToAddQueue item
+
+    # When an item is removed, add it to the remove queue
+    @model.bind 'remove', (item) => @_addItemToRemoveQueue item
 
     # Naive Sort
     @model.bind 'sort', () => ItemSubView.naiveSort @model, @$el, @elementKey
@@ -281,19 +321,44 @@ class ItemSubView extends Backbone.View
       # Add the new items
       newItems.each (item) => @addItem item
 
-  # Overloaded setElement() because of lack of @$el in init
-  setElement: (@$el) ->
+  # Render a single item
+  _renderItem: (item) ->
 
-  # Add an item
-  addItem: (item) ->
-    @initItem item
-    @renderItem item
+    # If the generator returned a template, we simply render it and fetch the returned element(s)
+    if item[@key] instanceof Gunther.Template
+      item[@elementKey] = item[@key].render item
 
-  # Remove an item
-  removeItem: (item) ->
-    # Guard, we may be removed before our own 'add' event fired
-    return if not item[@key]?
+    # If the item is a view, we render it and fetch it's element
+    else if item[@key] instanceof Backbone.View
+      item[@key].render()
+      item[@elementKey] = item[@key].el
 
+    # There is no else.
+    else
+      throw new Error 'Generator must return either a Gunther.Template or a Backbone.View instance'
+
+    # Pre-insert event
+    @events.preInsert item[@elementKey], @$el
+
+    if @evenClass? and (@model.indexOf item) % 2 is 0
+      ($ item[@elementKey]).addClass @evenClass
+    else if @oddClass?
+      ($ item[@elementKey]).addClass @oddClass
+
+    # Append the results
+    if @prepend
+      @$el.prependChild item[@elementKey]
+    else
+      ($ @$el).append item[@elementKey]
+
+    # Post-insert event
+    @events.postInsert item[@elementKey], @$el
+
+    # Set up a hash with all rendered items
+    @renderedItems[item.cid] = item
+
+  # Actual remove of item
+  _removeItem: (item) ->
     # Item is either a Backbone view
     if item[@key] instanceof Backbone.View
 
@@ -317,56 +382,68 @@ class ItemSubView extends Backbone.View
       # Post remove event
       do @events.postRemove
 
+      # Delete the reference to the DOM element
+      delete item[@elementKey]
+
     # Remove the item from our hash of items we rendered
     delete @renderedItems[item.cid]
 
   # Init the view in the item
-  initItem: (item) ->
+  _initItem: (item) ->
     if typeof @generator is 'function'
       item[@key] = @generator item
     else
       item[@key] = @generator
 
-  # Render a single item
-  renderItem: (item) ->
-    # If the generator returned a template, we simply render it and fetch the returned element(s)
-    if item[@key] instanceof Gunther.Template
-      item[@elementKey] = item[@key].render item
+  # Work queue, keeps track of a stack of items to be added/removed, and does
+  # this all in one sweep using animation frames. Should make for smoother
+  # operation when larger sets of items are added/removed.
 
-    # If the item is a view, we render it and fetch it's element
-    else if item[@key] instanceof Backbone.View
-      item[@key].render()
-      item[@elementKey] = item[@key].el
+  # Animation frame item queues
 
-    # There is no else.
-    else
-      throw new Error 'Generator must return either a Gunther.Template or a Backbone.View instance'
+  # Add an item to the add queue
+  _addItemToAddQueue: (item) ->
 
-    # Pre-insert event
-    @events.preInsert item[@elementKey], @$el
+    # Initialize the item
+    @_initItem item
 
-    if (@model.indexOf item) % 2 is 0
-      item[@elementKey].addClass @evenClass
-    else
-      item[@elementKey].addClass @oddClass
+    @_addItems.push item
+    do @_addQueueCheck
 
-    # Append the results
-    if @prepend
-      @$el.prepend item[@elementKey]
-    else
-      @$el.append item[@elementKey]
+  # Add an item to the remove queue
+  _addItemToRemoveQueue: (item) ->
+    # Guard, we may be removed before our own 'add' event fired
+    return if not item[@key]?
 
-    # Post-insert event
-    @events.postInsert item[@elementKey], @$el
+    @_removeItems.push item
+    do @_addQueueCheck
 
-    # Set up a hash with all rendered items
-    @renderedItems[item.cid] = item
+  # Set up a queue check
+  _addQueueCheck: ->
+    Gunther.Helper.animationFrame => do @_checkQueue
 
-  # Render the subview
-  render: () ->
-    # Render the items already in the collection
-    @model.each (item) => @renderItem item
+  # Check the queues for added/removed items and render/remove them
+  _checkQueue: ->
 
+    return if @_checkingQueue
+
+    @_checkingQueue = true
+
+    #console.log "adding #{@_addItems.length}, removing #{@_removeItems.length}"
+
+    # Render all new items for this frame
+    @_renderItem.apply this, [item] for item in @_addItems
+
+    # Remove all items for this frame
+    for item, index in @_removeItems
+      @_removeItem item
+
+    # Empty queues
+    @_addItems = []
+    @_removeItems = []
+
+    # Switch semaphore
+    @_checkingQueue = false
 
 # Main template class
 class Gunther.Template
