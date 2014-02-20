@@ -1,10 +1,13 @@
 (function() {
-  var addAndRemoveTest, runTests;
+  var addAndRemoveTest, largeItemCountTest, runTests;
 
   module('Lists');
 
-  runTests = function(tests) {
+  runTests = function(tests, sync) {
     var next, runningTest;
+    if (sync == null) {
+      sync = false;
+    }
     runningTest = 0;
     next = function() {
       if (runningTest === tests.length) {
@@ -12,19 +15,29 @@
       }
       tests[runningTest]();
       runningTest++;
-      return Gunther.Helper.animationFrame(next);
+      if (!sync) {
+        return Gunther.Helper.animationFrame(next);
+      } else {
+        return next();
+      }
     };
     return next();
   };
 
-  addAndRemoveTest = function() {
+  addAndRemoveTest = function(sync) {
     var collection, elem, tests;
     expect(5);
     collection = new Backbone.Collection;
     elem = singleElement('div.list', collection, function() {
-      return this.list('div.list', collection, new Gunther.Template(function(item) {
-        return this.element("div.item." + (item.get('foo')));
-      }));
+      if (sync) {
+        return this.syncList('div.list', collection, new Gunther.Template(function(item) {
+          return this.element("div.item." + (item.get('foo')));
+        }));
+      } else {
+        return this.list('div.list', collection, new Gunther.Template(function(item) {
+          return this.element("div.item." + (item.get('foo')));
+        }));
+      }
     });
     equal(elem.children().length, 0, 'List should initialize when empty');
     tests = [];
@@ -72,12 +85,24 @@
     tests.push(function() {
       return equal(elem.find('div.bar').length, 2, 'list should remove multiple items');
     });
-    return runTests(tests);
+    return runTests(tests, sync);
   };
 
-  asyncTest('Adding And Removing Items', addAndRemoveTest);
+  asyncTest('Adding And Removing Items', function() {
+    return addAndRemoveTest(false);
+  });
 
-  asyncTest('Adding And Removing Items, repeat', addAndRemoveTest);
+  asyncTest('Adding And Removing Items, repeat', function() {
+    return addAndRemoveTest(false);
+  });
+
+  asyncTest('Adding And Removing Items, sync', function() {
+    return addAndRemoveTest(true);
+  });
+
+  asyncTest('Adding And Removing Items, sync, repeat', function() {
+    return addAndRemoveTest(true);
+  });
 
   asyncTest('Lists, non empty', function() {
     var collection, elem, index, tests, _i;
@@ -147,18 +172,34 @@
   });
 
   asyncTest('Lists, large item counts', function() {
-    var add, check, collection, elem, maxNumRuns, multiplier;
+    return largeItemCountTest(false);
+  });
+
+  asyncTest('Lists, large item counts, sync', function() {
+    return largeItemCountTest(true);
+  });
+
+  largeItemCountTest = function(sync) {
+    var add, check, collection, doCheck, elem, maxNumRuns, multiplier;
     expect(1);
     collection = new Backbone.Collection;
     elem = singleElement('div.list', collection, function() {
-      return this.list('div.list', collection, new Gunther.Template(function(item) {
-        return this.element("div.item." + (item.get('foo')) + ".index-" + (item.get('index')), function() {
-          return this.t(item.get('index'));
-        });
-      }));
+      if (sync) {
+        return this.syncList('div.list', collection, new Gunther.Template(function(item) {
+          return this.element("div.item." + (item.get('foo')) + ".index-" + (item.get('index')), function() {
+            return this.t(item.get('index'));
+          });
+        }));
+      } else {
+        return this.list('div.list', collection, new Gunther.Template(function(item) {
+          return this.element("div.item." + (item.get('foo')) + ".index-" + (item.get('index')), function() {
+            return this.t(item.get('index'));
+          });
+        }));
+      }
     });
     maxNumRuns = 100;
-    multiplier = 10;
+    multiplier = 100;
     add = function(runCount) {
       var x, _i, _ref;
       for (x = _i = 0, _ref = multiplier - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; x = 0 <= _ref ? ++_i : --_i) {
@@ -168,17 +209,24 @@
         });
       }
       if (runCount === (maxNumRuns - 1)) {
-        return check(maxNumRuns * multiplier);
+        return doCheck(maxNumRuns * multiplier);
       }
       return add(runCount + 1);
     };
+    doCheck = function(count) {
+      if (sync) {
+        return check(count);
+      } else {
+        return Gunther.Helper.animationFrame(function() {
+          return check(count);
+        });
+      }
+    };
     check = function(count) {
-      return Gunther.Helper.animationFrame(function() {
-        equal(elem.find('div.item.bar').length, count, "List should have " + count + " items in the end");
-        return start();
-      });
+      equal(elem.find('div.item.bar').length, count, "List should have " + count + " items in the end");
+      return start();
     };
     return add(0);
-  });
+  };
 
 }).call(this);

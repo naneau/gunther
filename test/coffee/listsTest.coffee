@@ -1,6 +1,6 @@
 module 'Lists'
 
-runTests = (tests) ->
+runTests = (tests, sync = false) ->
 
   # Stack the tests with the animation frames for Gunther's lists
   runningTest = 0
@@ -12,12 +12,15 @@ runTests = (tests) ->
 
     runningTest++
 
-    # Skip an animation frame for every test
-    Gunther.Helper.animationFrame next
+    # Skip an animation frame for every test, when we are not in sync
+    if not sync
+      Gunther.Helper.animationFrame next
+    else
+      do next
 
   do next
 
-addAndRemoveTest = ->
+addAndRemoveTest = (sync) ->
   expect 5
 
   # Simple collection
@@ -25,8 +28,12 @@ addAndRemoveTest = ->
 
   # Render the template
   elem = singleElement 'div.list', collection, ->
-    @list 'div.list', collection, new Gunther.Template (item) ->
-      @element "div.item.#{item.get 'foo'}"
+    if sync
+      @syncList 'div.list', collection, new Gunther.Template (item) ->
+        @element "div.item.#{item.get 'foo'}"
+    else
+      @list 'div.list', collection, new Gunther.Template (item) ->
+        @element "div.item.#{item.get 'foo'}"
 
   # Start with no items
   equal elem.children().length, 0, 'List should initialize when empty'
@@ -35,7 +42,6 @@ addAndRemoveTest = ->
   tests.push ->
     collection.add foo: 'bar', bar: 'baz1'
   tests.push ->
-    #console.log (elem.find 'div.bar')
     equal (elem.find 'div.bar').length, 1, 'List should add a single item'
 
   tests.push ->
@@ -56,11 +62,14 @@ addAndRemoveTest = ->
   tests.push ->
     equal elem.find('div.bar').length, 2, 'list should remove multiple items'
 
-  runTests tests
+  runTests tests, sync
 
 # This test is run twice to ensure there's no initializing/ID problems
-asyncTest 'Adding And Removing Items', addAndRemoveTest
-asyncTest 'Adding And Removing Items, repeat', addAndRemoveTest
+asyncTest 'Adding And Removing Items', -> addAndRemoveTest false
+asyncTest 'Adding And Removing Items, repeat', -> addAndRemoveTest false
+
+asyncTest 'Adding And Removing Items, sync', -> addAndRemoveTest true
+asyncTest 'Adding And Removing Items, sync, repeat', -> addAndRemoveTest true
 
 asyncTest 'Lists, non empty', ->
 
@@ -114,7 +123,10 @@ asyncTest 'Lists, non empty', ->
   runTests tests
 
 # Large listing
-asyncTest 'Lists, large item counts', ->
+asyncTest 'Lists, large item counts', -> largeItemCountTest false
+asyncTest 'Lists, large item counts, sync', -> largeItemCountTest true
+
+largeItemCountTest = (sync) ->
   expect 1
 
   # Init col. with 10 items
@@ -122,12 +134,17 @@ asyncTest 'Lists, large item counts', ->
 
   # List the items
   elem = singleElement 'div.list', collection, ->
-    @list 'div.list', collection, new Gunther.Template (item) ->
-      @element "div.item.#{item.get 'foo'}.index-#{item.get 'index'}", ->
-        @t item.get 'index'
+    if sync
+      @syncList 'div.list', collection, new Gunther.Template (item) ->
+        @element "div.item.#{item.get 'foo'}.index-#{item.get 'index'}", ->
+          @t item.get 'index'
+    else
+      @list 'div.list', collection, new Gunther.Template (item) ->
+        @element "div.item.#{item.get 'foo'}.index-#{item.get 'index'}", ->
+          @t item.get 'index'
 
   maxNumRuns = 100
-  multiplier = 10
+  multiplier = 100
   add = (runCount) ->
 
     # Add item
@@ -137,13 +154,18 @@ asyncTest 'Lists, large item counts', ->
         index:  runCount + '.' + x
 
     # When max is reached, check result
-    return check (maxNumRuns * multiplier) if runCount is (maxNumRuns - 1)
+    return doCheck (maxNumRuns * multiplier) if runCount is (maxNumRuns - 1)
 
     # Next run
     add runCount + 1
 
-  check = (count) -> Gunther.Helper.animationFrame ->
+  doCheck = (count) ->
+    if sync
+      check count
+    else
+      Gunther.Helper.animationFrame -> check count
 
+  check = (count) ->
     # Ensure removal worked
     equal elem.find('div.item.bar').length, count, "List should have #{count} items in the end"
 

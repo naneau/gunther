@@ -3,7 +3,7 @@ module.exports = (grunt) ->
   buildOrder = ['src/root.coffee', 'src/helper.coffee',
       'src/idGenerator.coffee', 'src/boundProperty.coffee',
       'src/boundModel.coffee', 'src/itemSubView.coffee',
-      'src/template.coffee', 'src/switchView.coffee']
+      'src/template.coffee', 'src/switchView.coffee', 'src/template/list.coffee']
 
   # Project configuration.
   grunt.initConfig
@@ -64,7 +64,7 @@ module.exports = (grunt) ->
 
       # Gunther source
       source:
-        files: ['src/*.coffee']
+        files: ['src/**/*.coffee']
         tasks: ['coffee:compileSource', 'coffee:compileSourceWithMap']
         options:
           nospawn: false

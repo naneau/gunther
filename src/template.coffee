@@ -352,12 +352,6 @@ class Gunther.Template
 
     model.on event, (args...) -> handler.apply this, [current].concat args
 
-  # Set up a subview for every item in the collection
-  itemSubView: (options, view = null) -> new ItemSubView options, view
-
-  # Create a list
-  list: (element, options, view = null) -> @element element, -> new ItemSubView options, view
-
   # Aliases for shorter notation
 
   # Alias for element
