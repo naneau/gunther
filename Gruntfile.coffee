@@ -8,6 +8,7 @@ module.exports = (grunt) ->
     'src/boundModel.coffee',
     'src/template.coffee',
 
+    'src/template/binding.coffee',
     'src/template/element.coffee',
     'src/template/list.coffee',
     'src/template/partial.coffee',
