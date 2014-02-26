@@ -1,4 +1,4 @@
-# Bind a full element to a model's property
+# Internal: Bind a full element to a model's property
 class BoundModel
 
   # Constructor

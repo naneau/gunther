@@ -1,22 +1,33 @@
 # Partials
 Gunther.partials = {}
 
-# Add a partial
-Gunther.addPartial = (key, partial) ->
+# Public: Add a partial
+#
+# key - {String} name of the partial
+# handler - {Function} method to execute when partial is to be rendered
+Gunther.addPartial = (key, handler) ->
 
   # Set it up as a partial
-  Gunther.partials[key] = partial
+  Gunther.partials[key] = handler
 
   # Register as a method on root
-  throw new Error "can not add partial \"#{key}\", a partial or method with that name already exists" if Gunther.Template::[key]?
+  throw new Error "Can not add partial \"#{key}\", a partial or method with that name already exists" if Gunther.Template::[key]?
 
   # Register on template
   Gunther.Template::[key] = (args...) -> @partial.apply this, [key].concat args
 
-# Remove a partial
+# Public: Remove a partial
+#
+# See {Gunther::addPartial}
+#
+# key - {String} name of the partial
 Gunther.removePartial = (key) -> delete Gunther.partials.key
 
-# Render a registered partial
+# Public: Render a registered partial
+#
+# Arguments after `key` are passed directly to the partial's handler
+#
+# key - {String} name of the partials
 Gunther.Template::partial = (key, args...) ->
 
   # Sanity check
