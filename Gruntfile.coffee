@@ -4,7 +4,9 @@ module.exports = (grunt) ->
   'src/idGenerator.coffee', 'src/boundProperty.coffee',
   'src/boundModel.coffee', 'src/itemSubView.coffee', 'src/template.coffee',
   'src/switchView.coffee', 'src/template/list.coffee',
-  'src/template/partial.coffee'
+  'src/template/partial.coffee',
+
+  'src/init.coffee'
   ]
 
   # Project configuration.

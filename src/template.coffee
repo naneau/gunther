@@ -350,7 +350,6 @@ class Gunther.Template
 
   # Attribute
   attr: (args...) -> @attribute.apply this, args
-  a: (args...) -> @attribute.apply this, args
 
   # Property
   prop: (args...) -> @property.apply this, args
