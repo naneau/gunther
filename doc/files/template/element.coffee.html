@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset='UTF-8'>
+  <title>CoffeeScript API Documentation</title>
+  <link rel='stylesheet' href='..&#47;..&#47;assets/biscotto.css' type='text/css'>
+  <script src='..&#47;..&#47;assets/biscotto.js'></script>
+  <script src='..&#47;..&#47;assets/search_data.js'></script>
+</head>
+  <body>
+    <div id='base' data-path='..&#47;..&#47;'></div>
+<div id='header'>
+  <div id='menu'>
+    <a href='..&#47;..&#47;README.markdown.html' title='Gunther'>Gunther</a>
+    &raquo;
+    <a href='..&#47;..&#47;class_index.html' title='Index'>Index</a>
+    &raquo;
+    <span class='title'>template</span>
+    &raquo;
+    <span class='title'>element.coffee</span>
+    <nav>
+      <ul>
+        <li class='noframes'>
+          (<a class='noframes' href='#'>no frames</a>)
+        </li>
+      </ul>
+    </nav>
+    <div id='search'>
+      <a id='class_list_link' href='..&#47;..&#47;class_list.html'>Classes</a>
+      <a id='file_list_link' href='..&#47;..&#47;file_list.html'>Files</a>
+      <a id='method_list_link' href='..&#47;..&#47;method_list.html'>Methods</a>
+      <a id='extra_list_link' href='..&#47;..&#47;extra_list.html'>Extras</a>
+    </div>
+  </div>
+  <iframe id='search_frame'></iframe>
+  <div id='fuzzySearch'>
+    <input type='text'>
+    <ol></ol>
+  </div>
+  <div id='help'>
+    <p>
+      Quickly fuzzy find classes, mixins, methods, file:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-T</span>
+        Open fuzzy finder dialog
+      </li>
+    </ul>
+    <p>
+      In frame mode you can toggle the list naviation frame on the left side:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-L</span>
+        Toggle list view
+      </li>
+    </ul>
+    <p>
+      You can focus a list in frame mode or toggle a tab in frameless mode:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-C</span>
+        Class list
+      </li>
+      <li>
+        <span>Ctrl-I</span>
+        Mixin list
+      </li>
+      <li>
+        <span>Ctrl-F</span>
+        File list
+      </li>
+      <li>
+        <span>Ctrl-M</span>
+        Method list
+      </li>
+      <li>
+        <span>Ctrl-E</span>
+        Extras list
+      </li>
+    </ul>
+    <p>
+      You can focus and blur the search input:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-S</span>
+        Focus search input
+      </li>
+      <li>
+        <span>Esc</span>
+        Blur search input
+      </li>
+    </ul>
+    <p>
+      In frameless mode you can close the list tab:
+    </p>
+    <ul>
+      <li>
+        <span>Esc</span>
+        Close list tab
+      </li>
+    </ul>
+  </div>
+</div>
+    <div id='content'>
+      <h1>
+        File:
+        element.coffee
+      </h1>
+      <table class='box'>
+        <tr>
+          <td>Defined in:</td>
+          <td>template</td>
+        </tr>
+      </table>
+      <h2>Method Summary</h2>
+      <ul class='summary'>
+  <li>
+    <span class='signature'>
+      <a href='#Gunther.Template.prototype.element-file'>
+        ? <strong>Gunther.Template.prototype.element</strong>(tagName, args...)
+      </a>
+    </span>
+    <span class='desc'>
+      Add a child element
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#Gunther.Template.prototype.boundElement-file'>
+        ? <strong>Gunther.Template.prototype.boundElement</strong>(args...)
+      </a>
+    </span>
+    <span class='desc'>
+      Set up an element which is bound to a model&#39;s property
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#Gunther.Template.prototype.append-file'>
+        ? <strong>Gunther.Template.prototype.append</strong>(element)
+      </a>
+    </span>
+    <span class='desc'>
+      Append an element
+    </span>
+  </li>
+</ul>
+      <h2>Method Details</h2>
+      <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='Gunther.Template.prototype.element-file'>
+      ? <strong>Gunther.Template.prototype.element</strong>(tagName, args...)
+      <a class='gh-link' href='https:&#47;&#47;github.com&#47;naneau&#47;gunther
+&#47;blob&#47;0.0.20
+/src&#47;view.coffee#L4'>Source</a>
+    </p>
+    <div class='docstring'>
+  <p>Add a child element</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>tagName</span>
+      &mdash;
+      <span class='desc'>String with the name of the element (i.e. &quot;a&quot;, &quot;div&quot;, etc)</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='Gunther.Template.prototype.boundElement-file'>
+      ? <strong>Gunther.Template.prototype.boundElement</strong>(args...)
+      <a class='gh-link' href='https:&#47;&#47;github.com&#47;naneau&#47;gunther
+&#47;blob&#47;0.0.20
+/src&#47;view.coffee#L39'>Source</a>
+    </p>
+    <div class='docstring'>
+  <p>Set up an element which is bound to a model&#39;s property</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>element</span>
+      &mdash;
+      <span class='desc'>string to pass to {Gunther.Template::element}</span>
+    </li>
+    <li>
+      <span class='name'>model</span>
+      &mdash;
+      <span class='desc'>model to bind on</span>
+    </li>
+    <li>
+      <span class='type'>(String)</span>
+      <span class='name'>properties</span>
+      &mdash;
+      <span class='desc'>single or list of properties to listen to (given as <a href='https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/String'>String</a>)</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='Gunther.Template.prototype.append-file'>
+      ? <strong>Gunther.Template.prototype.append</strong>(element)
+      <a class='gh-link' href='https:&#47;&#47;github.com&#47;naneau&#47;gunther
+&#47;blob&#47;0.0.20
+/src&#47;view.coffee#L45'>Source</a>
+    </p>
+    <div class='docstring'>
+  <p>Append an element</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>element</span>
+      &mdash;
+      <span class='desc'>element to append, can be a {Backbone.View} or anything that can be appended directly to the DOM</span>
+    </li>
+  </ul>
+</div>
+  </div>
+</div>
+    </div>
+    <div id='footer'>
+  Generated on
+  Wed Feb 26 2014 16:01:51 GMT-0500 (EST)
+  by
+  <a href='https://github.com/gjtorikian/biscotto' title='TomDoc-CoffeeScript API documentation generator'>Biscotto</a>
+  v2.1.1
+  (Node.js v0.10.26).
+  &#10034;
+  Press Ctrl-h to see the keyboard shortcuts
+</div>
+  </body>
+</html>

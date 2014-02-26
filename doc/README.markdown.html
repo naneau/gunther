@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset='UTF-8'>
+  <title>CoffeeScript API Documentation</title>
+  <link rel='stylesheet' href='assets/biscotto.css' type='text/css'>
+  <script src='assets/biscotto.js'></script>
+  <script src='assets/search_data.js'></script>
+</head>
+  <body>
+    <div id='base' data-path=''></div>
+<div id='header'>
+  <div id='menu'>
+    <a href='README.markdown.html' title='Gunther'>Gunther</a>
+    &raquo;
+    <a href='class_index.html' title='Index'>Index</a>
+    &raquo;
+    <span class='title'>README.markdown</span>
+    <nav>
+      <ul>
+        <li class='noframes'>
+          (<a class='noframes' href='#'>no frames</a>)
+        </li>
+      </ul>
+    </nav>
+    <div id='search'>
+      <a id='class_list_link' href='class_list.html'>Classes</a>
+      <a id='file_list_link' href='file_list.html'>Files</a>
+      <a id='method_list_link' href='method_list.html'>Methods</a>
+      <a id='extra_list_link' href='extra_list.html'>Extras</a>
+    </div>
+  </div>
+  <iframe id='search_frame'></iframe>
+  <div id='fuzzySearch'>
+    <input type='text'>
+    <ol></ol>
+  </div>
+  <div id='help'>
+    <p>
+      Quickly fuzzy find classes, mixins, methods, file:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-T</span>
+        Open fuzzy finder dialog
+      </li>
+    </ul>
+    <p>
+      In frame mode you can toggle the list naviation frame on the left side:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-L</span>
+        Toggle list view
+      </li>
+    </ul>
+    <p>
+      You can focus a list in frame mode or toggle a tab in frameless mode:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-C</span>
+        Class list
+      </li>
+      <li>
+        <span>Ctrl-I</span>
+        Mixin list
+      </li>
+      <li>
+        <span>Ctrl-F</span>
+        File list
+      </li>
+      <li>
+        <span>Ctrl-M</span>
+        Method list
+      </li>
+      <li>
+        <span>Ctrl-E</span>
+        Extras list
+      </li>
+    </ul>
+    <p>
+      You can focus and blur the search input:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-S</span>
+        Focus search input
+      </li>
+      <li>
+        <span>Esc</span>
+        Blur search input
+      </li>
+    </ul>
+    <p>
+      In frameless mode you can close the list tab:
+    </p>
+    <ul>
+      <li>
+        <span>Esc</span>
+        Close list tab
+      </li>
+    </ul>
+  </div>
+</div>
+    <div id='content'>
+      <nav class='toc'>
+        <p class='title'>
+          <a class='hide_toc' href='#'>
+            <strong>Table of Contents</strong>
+          </a>
+          <small>
+            (<a class='float_toc' href='#'>left</a>)
+          </small>
+        </p>
+      </nav>
+      <div id='filecontents'>
+        <h1 id="gunther">Gunther</h1><p><a href="http://naneau.net/gunther"><a href="http://naneau.net/gunther">http://naneau.net/gunther</a></a></p><p><a href="https://travis-ci.org/naneau/gunther"><img src="https://travis-ci.org/naneau/gunther.png?branch=master" alt="Build Status"></a></p><h2 id="introduction">Introduction</h2><p>Gunther is a view and templating tool for
+<a href="http://backbonejs.org/">Backbone</a>. Its goal is to provide a powerful and
+flexible way to create views, based on Backbone Models and Collections,
+supporting live bindings and expressive syntax.</p><p>Gunther&#39;s templates are never compiled or interpreted. The templates are &quot;live&quot;
+functions, that retain their parent scope. Because they are code based, not
+string based, they are easily maintained with the rest of application code.</p><h3 id="concise">Concise</h3><p>Template are short, to the point, and easy to read. Gunther is written to make
+maximum use <a href="http://coffeescript.org/">CoffeeScript&#39;s</a> notation, combined with
+CSS inspired element creation.</p><pre><code class="lang-coffeescript">template = new Gunther.Template (backboneModel) -&gt;
+
+    # Elements are added using the @element method
+    @element &#39;p&#39;, &#39;This is some text&#39;
+
+    # The @element method accepts ID&#39;s, classes, attributes and properties in
+    # a CSS-like syntax
+    @element &#39;p#has-an-id&#39;
+    @element &#39;p.has-a-class&#39;
+    @element &#39;input[type=checkbox]:checked&#39;
+
+    # IDs, classes, attributes, and properties can be chained
+    @element &#39;input[type=text]#foo.bar.baz:checked&#39;
+
+    # Children are added functionally
+    @element &#39;p&#39;, -&gt;
+        @element &#39;a[href=linked.html]&#39;, -&gt; &#39;This is a link&#39;
+        @element &#39;span&#39;, -&gt; &#39;And this is some text in a span&#39;
+
+    # All content can be expressed as functions
+    @text -&gt; &quot;I can count to 10! #{implode &#39;,&#39; [1..10]}&quot;
+
+    # Events can be handled inline, without losing scope
+    @on &#39;click&#39;, (e) -&gt; backboneModel.set foo: &#39;bar&#39;
+</code></pre>
+<h3 id="live-bindings">Live Bindings</h3><p>Gunther can bind any model attribute to DOM elements, classes, attributes and
+properties, allowing for live updating views.</p><pre><code class="lang-coffeescript">template = new Gunther.Template (backboneModel) -&gt;
+
+    @element &#39;p&#39;, -&gt;
+
+        # Toggle a class depending on a model&#39;s attribute
+        @toggleClass &#39;foo&#39;, backboneModel, &#39;foo&#39;
+
+        # Toggle a class using a generator
+        @toggleClass &#39;bar&#39;, backboneModel, &#39;bar&#39;, () -&gt; (backboneModel.get &#39;bar&#39;) is &#39;bar&#39;
+
+        # Bind text to a model&#39;s attribute
+        @boundText backboneModel, &#39;foo&#39;
+
+        # Bind DOM attributes to a model
+        @boundAttribute &#39;src&#39; backboneModel, &#39;source&#39;
+
+        # Bind DOM properties to a model
+        @boundProperty &#39;checked&#39; backboneModel, &#39;selected&#39;
+
+        # Change a style property with a model&#39;s attribute
+        @boundCss &#39;color&#39;, backboneModel, &#39;foo&#39;, () -&gt;
+            if (backboneModel.get &#39;foo&#39;) is &#39;foo&#39; then &#39;#FF0000&#39; else &#39;#0000FF&#39;
+</code></pre>
+<h3 id="list-views">List views</h3><p>List views allow you to set up repeated views for items from a collection. The
+list is automatically pruned and sorted when the underlying collection is.</p><pre><code class="lang-coffeescript">template = new Gunther.Tempalte (collection) -&gt;
+    @list &#39;ul&#39;, collection, new Gunther.Template (item) -&gt;
+        @element &#39;li&#39;, -&gt; item.get &#39;foo&#39;
+</code></pre>
+<h3 id="extensibility">Extensibility</h3><p>Gunther supports partials, so it&#39;s easy to create re-usable components.
+Templates can also be composed out of sub-templates.</p><pre><code class="lang-coffeescript">
+# A &quot;fancy&quot; paragraph partial
+Gunther.addPartial &#39;fancyParagraph&#39;, (text) -&gt;
+    @element &#39;p.fancy&#39;, -&gt; text
+
+# A button partial, complete with handler
+Gunther.addPartial &#39;button&#39;, (text, handler) -&gt;
+    @element &#39;button&#39;, -&gt;
+        @text text
+        @on &#39;click&#39;, handler
+
+template = new Gunther.Template (backboneCollection) -&gt;
+
+    # Fancy paragraph
+    @fancyParagraph &#39;this is the text for the paragraph&#39;
+
+    # Button
+    @button &#39;Click me!&#39;, () -&gt; alert &#39;I was clicked!&#39;
+
+    # Render another template inside this one
+    @subTemplate someOtherTemplate
+</code></pre>
+<h2 id="rendering">Rendering</h2><p>Rendering a template is easy:</p><pre><code class="lang-coffeescript">
+template = new Gunther.Template -&gt;
+    @element &#39;div&#39;, &#39;This is text from a Gunther template&#39;
+
+template.renderInto $ &#39;#your-element&#39;
+</code></pre><p>Gunther&#39;s templates integrate easily with Backbone&#39;s views:</p><pre><code class="lang-coffeescript">
+class FooView extends Backbone.View
+
+    # The view&#39;s template
+    @template: new Gunther.Template (model) -&gt;
+        @element &#39;div&#39;, -&gt; model.get &#39;foo&#39;
+
+    # Use the render method to render the template into the view&#39;s element
+    render: -&gt; FooView.template.renderInto @$el, @model
+</code></pre>
+
+      </div>
+    </div>
+    <div id='footer'>
+  Generated on
+  Wed Feb 26 2014 16:01:51 GMT-0500 (EST)
+  by
+  <a href='https://github.com/gjtorikian/biscotto' title='TomDoc-CoffeeScript API documentation generator'>Biscotto</a>
+  v2.1.1
+  (Node.js v0.10.26).
+  &#10034;
+  Press Ctrl-h to see the keyboard shortcuts
+</div>
+  </body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset='UTF-8'>
+  <title>CoffeeScript API Documentation</title>
+  <link rel='stylesheet' href='..&#47;..&#47;assets/biscotto.css' type='text/css'>
+  <script src='..&#47;..&#47;assets/biscotto.js'></script>
+  <script src='..&#47;..&#47;assets/search_data.js'></script>
+</head>
+  <body>
+    <div id='base' data-path='..&#47;..&#47;'></div>
+<div id='header'>
+  <div id='menu'>
+    <a href='..&#47;..&#47;README.markdown.html' title='Gunther'>Gunther</a>
+    &raquo;
+    <a href='..&#47;..&#47;class_index.html' title='Index'>Index</a>
+    &raquo;
+    <span class='title'>template</span>
+    &raquo;
+    <span class='title'>binding.coffee</span>
+    <nav>
+      <ul>
+        <li class='noframes'>
+          (<a class='noframes' href='#'>no frames</a>)
+        </li>
+      </ul>
+    </nav>
+    <div id='search'>
+      <a id='class_list_link' href='..&#47;..&#47;class_list.html'>Classes</a>
+      <a id='file_list_link' href='..&#47;..&#47;file_list.html'>Files</a>
+      <a id='method_list_link' href='..&#47;..&#47;method_list.html'>Methods</a>
+      <a id='extra_list_link' href='..&#47;..&#47;extra_list.html'>Extras</a>
+    </div>
+  </div>
+  <iframe id='search_frame'></iframe>
+  <div id='fuzzySearch'>
+    <input type='text'>
+    <ol></ol>
+  </div>
+  <div id='help'>
+    <p>
+      Quickly fuzzy find classes, mixins, methods, file:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-T</span>
+        Open fuzzy finder dialog
+      </li>
+    </ul>
+    <p>
+      In frame mode you can toggle the list naviation frame on the left side:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-L</span>
+        Toggle list view
+      </li>
+    </ul>
+    <p>
+      You can focus a list in frame mode or toggle a tab in frameless mode:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-C</span>
+        Class list
+      </li>
+      <li>
+        <span>Ctrl-I</span>
+        Mixin list
+      </li>
+      <li>
+        <span>Ctrl-F</span>
+        File list
+      </li>
+      <li>
+        <span>Ctrl-M</span>
+        Method list
+      </li>
+      <li>
+        <span>Ctrl-E</span>
+        Extras list
+      </li>
+    </ul>
+    <p>
+      You can focus and blur the search input:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-S</span>
+        Focus search input
+      </li>
+      <li>
+        <span>Esc</span>
+        Blur search input
+      </li>
+    </ul>
+    <p>
+      In frameless mode you can close the list tab:
+    </p>
+    <ul>
+      <li>
+        <span>Esc</span>
+        Close list tab
+      </li>
+    </ul>
+  </div>
+</div>
+    <div id='content'>
+      <h1>
+        File:
+        binding.coffee
+      </h1>
+      <table class='box'>
+        <tr>
+          <td>Defined in:</td>
+          <td>template</td>
+        </tr>
+      </table>
+      <h2>Method Summary</h2>
+      <ul class='summary'>
+  <li>
+    <span class='signature'>
+      <a href='#Gunther.Template.prototype.on-file'>
+        ? <strong>Gunther.Template.prototype.on</strong>(event, handler)
+      </a>
+    </span>
+    <span class='desc'>
+      Add an event handler Set up an event handler for DOM events, uses jQuery&#39;s <code>bind()</code>
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#Gunther.Template.prototype.haltedOn-file'>
+        ? <strong>Gunther.Template.prototype.haltedOn</strong>(event, handler)
+      </a>
+    </span>
+    <span class='desc'>
+      A &quot;halted&quot; on, that has no propagation (and no default) Before the <code>handler</code> is called, the <code>stopPropagation()</code> and <code>preventDefault()</code> are called on the event See {Gunther.Template::on}
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#Gunther.Template.prototype.show-file'>
+        ? <strong>Gunther.Template.prototype.show</strong>(model, properties, resolver)
+      </a>
+    </span>
+    <span class='desc'>
+      Show/hide an element based on a boolean property
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#Gunther.Template.prototype.hide-file'>
+        ? <strong>Gunther.Template.prototype.hide</strong>(model, properties, resolver)
+      </a>
+    </span>
+    <span class='desc'>
+      Hide/show an element based on a boolean property This is simply show() inverted See {Gunther.Template::hide}
+    </span>
+  </li>
+</ul>
+      <h2>Method Details</h2>
+      <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='Gunther.Template.prototype.on-file'>
+      ? <strong>Gunther.Template.prototype.on</strong>(event, handler)
+      <a class='gh-link' href='https:&#47;&#47;github.com&#47;naneau&#47;gunther
+&#47;blob&#47;0.0.20
+/src&#47;view.coffee#L7'>Source</a>
+    </p>
+    <div class='docstring'>
+  <p>Add an event handler</p><p>Set up an event handler for DOM events, uses jQuery&#39;s <code>bind()</code></p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>event</span>
+      &mdash;
+      <span class='desc'>event name</span>
+    </li>
+    <li>
+      <span class='name'>handler</span>
+      &mdash;
+      <span class='desc'>handler method</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='Gunther.Template.prototype.haltedOn-file'>
+      ? <strong>Gunther.Template.prototype.haltedOn</strong>(event, handler)
+      <a class='gh-link' href='https:&#47;&#47;github.com&#47;naneau&#47;gunther
+&#47;blob&#47;0.0.20
+/src&#47;view.coffee#L18'>Source</a>
+    </p>
+    <div class='docstring'>
+  <p>A &quot;halted&quot; on, that has no propagation (and no default)</p><p>Before the <code>handler</code> is called, the <code>stopPropagation()</code> and
+<code>preventDefault()</code> are called on the event</p><p>See {Gunther.Template::on}</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>event</span>
+      &mdash;
+      <span class='desc'>event name</span>
+    </li>
+    <li>
+      <span class='name'>handle</span>
+      &mdash;
+      <span class='desc'>handling method</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='Gunther.Template.prototype.show-file'>
+      ? <strong>Gunther.Template.prototype.show</strong>(model, properties, resolver)
+      <a class='gh-link' href='https:&#47;&#47;github.com&#47;naneau&#47;gunther
+&#47;blob&#47;0.0.20
+/src&#47;view.coffee#L30'>Source</a>
+    </p>
+    <div class='docstring'>
+  <p>Show/hide an element based on a boolean property</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>model</span>
+      &mdash;
+      <span class='desc'>The model to bind on</span>
+    </li>
+    <li>
+      <span class='name'>properties</span>
+      &mdash;
+      <span class='desc'>Either a single property, or a list or properties (given as string)</span>
+    </li>
+    <li>
+      <span class='type'>(Boolean)</span>
+      <span class='name'>resolver</span>
+      &mdash;
+      <span class='desc'>a method that will return a <a href='https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Boolean'>Boolean</a> method that determines whether the element should be visible or not</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='Gunther.Template.prototype.hide-file'>
+      ? <strong>Gunther.Template.prototype.hide</strong>(model, properties, resolver)
+      <a class='gh-link' href='https:&#47;&#47;github.com&#47;naneau&#47;gunther
+&#47;blob&#47;0.0.20
+/src&#47;view.coffee#L59'>Source</a>
+    </p>
+    <div class='docstring'>
+  <p>Hide/show an element based on a boolean property</p><p>This is simply show() inverted</p><p>See {Gunther.Template::hide}</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>model</span>
+      &mdash;
+      <span class='desc'>The model to bind on</span>
+    </li>
+    <li>
+      <span class='name'>properties</span>
+      &mdash;
+      <span class='desc'>Either a single property, or a list or properties (given as string)</span>
+    </li>
+    <li>
+      <span class='type'>(Boolean)</span>
+      <span class='name'>resolver</span>
+      &mdash;
+      <span class='desc'>a method that will return a <a href='https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Boolean'>Boolean</a> method that determines whether the element should be hidden or not</span>
+    </li>
+  </ul>
+</div>
+  </div>
+</div>
+    </div>
+    <div id='footer'>
+  Generated on
+  Wed Feb 26 2014 16:01:51 GMT-0500 (EST)
+  by
+  <a href='https://github.com/gjtorikian/biscotto' title='TomDoc-CoffeeScript API documentation generator'>Biscotto</a>
+  v2.1.1
+  (Node.js v0.10.26).
+  &#10034;
+  Press Ctrl-h to see the keyboard shortcuts
+</div>
+  </body>
+</html>
