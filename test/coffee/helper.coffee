@@ -32,3 +32,16 @@ window.renderGunther = (template, args...) ->
   template.renderInto.apply template, [wrapper].concat args
 
   wrapper
+
+window.renderGuntherView = (view, args...) ->
+  wrapper = ($ '<div class="gunther-output"></div>')
+
+  ($ 'body').append wrapper
+
+  # Set the element
+  view.setElement wrapper
+
+  # Render
+  view.render.apply view, [wrapper].concat args
+
+  wrapper

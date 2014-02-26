@@ -155,7 +155,7 @@ class BoundProperty
 # BoundProperty is an EventEmitter... (why can't I just extend from Backbone.Events?)
 _.extend BoundProperty.prototype, Backbone.Events
 
-# Bind a full element to a model's property
+# Internal: Bind a full element to a model's property
 class BoundModel
 
   # Constructor
@@ -193,7 +193,8 @@ class BoundModel
 # BoundModel is an EventEmitter... (why can't I just extend from Backbone.Events?)
 _.extend BoundModel.prototype, Backbone.Events
 
-
+# Public: The Main Gunther Template Class
+#
 # Main template class
 class Gunther.Template
 
@@ -207,7 +208,11 @@ class Gunther.Template
 
     generator
 
-  # Generate children for a DOM element
+  # Private: Generate children for a DOM element
+  #
+  # el: current element
+  # childFn: child generating method
+  # scope: current scope
   @generateChildren: (el, childFn, scope) ->
 
     # Do the actual recursion, setting up the scope proper, and passing the parent element
@@ -249,7 +254,9 @@ class Gunther.Template
   # Constructor
   constructor: (@fn) -> null
 
-  # Render
+  # Public: Render the template
+  #
+  # Returns an Array of DOM elements
   render: (args...) ->
 
     # Set up a root element, its children will be transferred
@@ -271,7 +278,7 @@ class Gunther.Template
 
     children
 
-  # Render into an element
+  # Public: Render into an element
   #
   # This will *append* the elements from the template into the passed DOM element
   #
@@ -285,7 +292,7 @@ class Gunther.Template
 
     children
 
-  # Render a sub-template
+  # Public: Render a sub-template
   subTemplate: (template, args...) -> template.renderInto @current, args...
 
   # Bind an attribute or property to a property of a model
@@ -299,21 +306,20 @@ class Gunther.Template
 
   # Aliases for shorter notation
 
-  # Alias for element
+  # Public: Alias for `@element()`
   e: (tagName, args...) -> @element tagName, args...
 
-  # Alias for add text
+  # Public: Alias for `@text()`
   t: (args...) -> @text args...
 
-  # Attribute
+  # Public: Alias for `@attribute()`
   attr: (args...) -> @attribute.apply this, args
 
-  # Property
+  # Public: Alias for `@property`
   prop: (args...) -> @property.apply this, args
 
-  # Shorthand for class
+  # Public: Alias for `@attribute 'class', className`
   class: (className) -> @attribute 'class', className
-
 
 # Switched views
 #
@@ -404,7 +410,9 @@ class ViewSwitch
 # Export to Gunther scope
 Gunther.SwitchedView = SwitchedView
 
-# Create a child to @current, recurse and add children to it, etc.
+# Public: Add a child element
+#
+# tagName - String with the name of the element (i.e. "a", "div", etc)
 Gunther.Template::element = (tagName, args...) ->
 
   # Element we're working on starts out with the current one set up in
@@ -441,157 +449,17 @@ Gunther.Template::element = (tagName, args...) ->
 
   null
 
-# Set up an element which is bound to a model's property
+# Public: Set up an element which is bound to a model's property
+#
+# element - string to pass to {Gunther.Template::element}
+# model - model to bind on
+# properties - single or list of properties to listen to (given as {String})
 Gunther.Template::boundElement = (args...) -> @element (do args.shift), new BoundModel args...
 
-# Set an attribute
-Gunther.Template::attribute = (name, value, args...) ->
-
-  # Current element
-  el = @current
-
-  # Set up binding for bound properties
-  if value instanceof BoundProperty
-
-    # Set the base value
-    el.attr name, value.getValue()
-
-    # On change re-set the attribute
-    value.bind 'change', (newValue) -> el.attr name, value.getValue()
-
-  # Else try to set directly
-  else
-    el.attr name, value
-
-  null
-
-# Add up an attribute which is "bound"
-# Pass it the attributes name, the model, the property, and optionally a
-# value generating function
-Gunther.Template::boundAttribute = (args...) -> @attribute (do args.shift), new BoundProperty args...
-
-# Set a property (note this differs from attributes, as per jQuery's API)
-Gunther.Template::property = (name, value, args...) ->
-
-  # Current element
-  el = @current
-
-  # Set up binding for bound properties
-  if value instanceof BoundProperty
-
-    # Set the base value
-    el.prop name, value.getValue()
-
-    # On change re-set the property
-    value.bind 'change', (newValue) -> el.prop name, value.getValue()
-
-  # Else try to set directly
-  else
-    el.prop name, value
-
-  null
-
-# Add up a property which is "bound"
-# Pass it the property's name, the model, the property, and optionally a
-# value generating function
-Gunther.Template::boundProperty = (args...) -> @property (do args.shift), new BoundProperty args...
-
-# Set a style property
-Gunther.Template::css = (name, value) ->
-
-  # When hash is passed, run each item through @css
-  return (@css realName, value for realName, value of name) if name instanceof Object
-
-  # Current element
-  el = @current
-
-  # Set up binding for bound properties
-  if value instanceof BoundProperty
-
-    # Set the base value
-    el.css name, value.getValue()
-
-    # On change re-set the attribute
-    value.bind 'change', (newValue) -> el.css name, newValue
-
-    return el
-
-  # Else try to set directly
-  else
-    el.css name, value
-
-  null
-
-# Bound CSS property
-Gunther.Template::boundCss = (args...) -> @css (do args.shift), new BoundProperty args...
-
-# Show/hide an element based on a boolean property
-Gunther.Template::show = (model, properties, resolver) ->
-
-  # Hold on to current element
-  element = @current
-
-  # Initialize resolver when not passed
-  (resolver = (value) -> value) unless resolver?
-
-  # The actual show method
-  show = (element, shown) -> if shown then do ($ element).show else do ($ element).hide
-
-  for property in [].concat properties
-    do (property) =>
-
-      # Track changes
-      model.on "change:#{property}", (model) ->
-        show element, resolver model.get property
-
-      # Initial show/hide
-      show element, resolver model.get property
-
-# Hide/show an element based on a boolean property
-# This is simply show() inverted
-Gunther.Template::hide = (model, properties, resolver) ->
-
-  # Initialize resolver when not passed
-  (resolver = (value) -> value) unless resolver?
-
-  @show model, properties, (value) -> not resolver value
-
-# Toggle a class
-Gunther.Template::toggleClass = (className, model, properties, toggle) ->
-
-  # Make sure we get an array of props
-  properties = [].concat properties
-
-  # When no toggle is passed simply use a property value
-  unless toggle instanceof Function then toggle = (value) -> value
-
-  # Track the element
-  element = @current
-
-  # Perform the class toggle
-  performToggle = (model, value) ->
-    ($ element).toggleClass className, toggle value
-
-  # For every property in the list
-  for property in properties
-
-    model.on "change:#{property}", performToggle
-
-    performToggle model, model.get property
-
-  null
-
-# Set up an event handler for DOM events
-Gunther.Template::on = (event, handler) -> @current.bind event, handler
-
-# A "halted" on, that has no propagation (and no default)
-Gunther.Template::haltedOn = (event, handler) -> @current.bind event, (event) ->
-  do event.stopPropagation
-  do event.preventDefault
-
-  handler event
-
-# Append an element
+# Public: Append an element
+#
+# element - element to append, can be a {Backbone.View} or anything that can be
+#   appended directly to the DOM
 Gunther.Template::append = (element) ->
   if element instanceof Backbone.View
     # The element is a Backbone view
@@ -879,22 +747,33 @@ class ItemSubView extends Backbone.View
 # Partials
 Gunther.partials = {}
 
-# Add a partial
-Gunther.addPartial = (key, partial) ->
+# Public: Add a partial
+#
+# key - {String} name of the partial
+# handler - {Function} method to execute when partial is to be rendered
+Gunther.addPartial = (key, handler) ->
 
   # Set it up as a partial
-  Gunther.partials[key] = partial
+  Gunther.partials[key] = handler
 
   # Register as a method on root
-  throw new Error "can not add partial \"#{key}\", a partial or method with that name already exists" if Gunther.Template::[key]?
+  throw new Error "Can not add partial \"#{key}\", a partial or method with that name already exists" if Gunther.Template::[key]?
 
   # Register on template
   Gunther.Template::[key] = (args...) -> @partial.apply this, [key].concat args
 
-# Remove a partial
+# Public: Remove a partial
+#
+# See {Gunther::addPartial}
+#
+# key - {String} name of the partial
 Gunther.removePartial = (key) -> delete Gunther.partials.key
 
-# Render a registered partial
+# Public: Render a registered partial
+#
+# Arguments after `key` are passed directly to the partial's handler
+#
+# key - {String} name of the partials
 Gunther.Template::partial = (key, args...) ->
 
   # Sanity check
@@ -904,11 +783,160 @@ Gunther.Template::partial = (key, args...) ->
 
   @subTemplate.apply this, [template].concat args
 
+### Public ###
+#
+# Properties and Attributes
+#
+# Set an attribute
+#
+# Uses jQuery's `attr()` method
+#
+# name - {String} name of the attribute to add
+# value - {String} value for the attribute
+Gunther.Template::attribute = (name, value) ->
+
+  # Current element
+  el = @current
+
+  # Set up binding for bound properties
+  if value instanceof BoundProperty
+
+    # Set the base value
+    el.attr name, value.getValue()
+
+    # On change re-set the attribute
+    value.bind 'change', (newValue) -> el.attr name, value.getValue()
+
+  # Else try to set directly
+  else
+    el.attr name, value
+
+  null
+
+# Add a DOM attribute which is "bound" to a model's attribute
+#
+# name - {String} name of the attribute to add
+# model - {Backbone.Model} to bind on
+# property - {String} or {Array} of properties to bind on
+# generator - (optional) method that generates the value after a change
+Gunther.Template::boundAttribute = (args...) -> @attribute (do args.shift), new BoundProperty args...
+
+# Set a property
+#
+# note: this differs from attributes, as per jQuery's API. Use this for
+# properties like `checked` on a checkbox
+#
+# name - {String} name of the property to add
+# value - {String} value for the attribute
+Gunther.Template::property = (name, value) ->
+
+  # Current element
+  el = @current
+
+  # Set up binding for bound properties
+  if value instanceof BoundProperty
+
+    # Set the base value
+    el.prop name, value.getValue()
+
+    # On change re-set the property
+    value.bind 'change', (newValue) -> el.prop name, value.getValue()
+
+  # Else try to set directly
+  else
+    el.prop name, value
+
+  null
+
+# Add a property which is "bound"
+#
+# Pass it the property's name, the model, the property, and optionally a
+# value generating function
+#
+# name - {String} name of the property to add
+# model - {Backbone.Model} to bind on
+# property - {String} or {Array} of properties to bind on
+# generator - (optional) method that generates the value after a change
+Gunther.Template::boundProperty = (args...) -> @property (do args.shift), new BoundProperty args...
+
+# Set a style property
+#
+# This method accepts both an object of the form `cssKey: value` or a single
+# name/value pair
+#
+# name - name of the CSS property
+# value - value of the CSS property
+Gunther.Template::css = (name, value) ->
+
+  # When hash is passed, run each item through @css
+  return (@css realName, value for realName, value of name) if name instanceof Object
+
+  # Current element
+  el = @current
+
+  # Set up binding for bound properties
+  if value instanceof BoundProperty
+
+    # Set the base value
+    el.css name, value.getValue()
+
+    # On change re-set the attribute
+    value.bind 'change', (newValue) -> el.css name, newValue
+
+    return el
+
+  # Else try to set directly
+  else
+    el.css name, value
+
+  null
+
+# Bind a CSS property to a model's property or properties
+#
+# name - {String} name of the CSS property
+# model - {Backbone.Model} to bind on
+# property - {String} or {Array} of properties to bind on
+# generator - (optional) method that generates the value after a change
+Gunther.Template::boundCss = (args...) -> @css (do args.shift), new BoundProperty args...
+
+# Toggle an element's class based on a property (or set of properties)
+#
+# className - {String} name of the class to toggle
+# model - {Backbone.Model} to bind on
+# property - {String} or {Array} of properties to bind on
+# toggle - method that decides whether the class should be included or not,
+#   should return a {Boolean}
+Gunther.Template::toggleClass = (className, model, property, toggle) ->
+
+  # Make sure we get an array of props
+  properties = [].concat property
+
+  # When no toggle is passed simply use a property value
+  unless toggle instanceof Function then toggle = (value) -> value
+
+  # Track the element
+  element = @current
+
+  # Perform the class toggle
+  performToggle = (model, value) ->
+    ($ element).toggleClass className, toggle value
+
+  # For every property in the list
+  for property in properties
+
+    model.on "change:#{property}", performToggle
+
+    performToggle model, model.get property
+
+  null
+
+### Public ###
+#
 # Add text to the current element
 #
-# This will create a text node and append it to the current element, the
-# contents of which can be either a string, or a bound property (see
-# @bind())
+# This will create a text node and append it to the current element
+#
+# text - {String} the text to add
 Gunther.Template::text = (text) ->
 
   # Create text node
@@ -934,11 +962,49 @@ Gunther.Template::text = (text) ->
   # Append the child node
   @current.append el
 
-# Bound text
+# Bind a text node to a model's property
+#
+# model - {Backbone.Model} to bind on
+# property - {String} or {Array} of properties to bind on
+# generator - (optional) method that generates the value after a change, when
+#   omitted, the value of the changed property is used
 Gunther.Template::boundText = (args...) -> @text new BoundProperty args...
 
-# Spaced text
+# Add text, with spaces on either side
+#
+# {Gunther.Template::text} adds its text node without whitespace surrounding
+# it, which is sometimes not desired for stylistic reasons. This method will
+# add the text surrounded by a space on either side.
+#
+# text - {String} Text to add
 Gunther.Template::spacedText = (text) -> @text " #{text} "
+
+# Public: A view that uses Gunther.Template
+#
+# Use this class to easily create Backbone.Views that use Gunther's templating.
+#
+# Examples
+#
+#  class Foo extends Gunther.View
+#    template: (model) ->
+#      @p -> model.get 'foo'
+class Gunther.View extends Backbone.View
+
+  # Private: Wrap a template
+  #
+  # tpl: either a {Function} or {Gunther.Template}
+  @wrapTemplate: (tpl) -> if typeof tpl is 'function' then new Gunther.Template tpl else tpl
+
+  # Render
+  render: () ->
+    # Get the actual template
+    template = Gunther.View.wrapTemplate @template
+
+    # Sanity check
+    throw new Error "No template given" if template not instanceof Gunther.Template
+
+    # Render the template
+    template.renderInto @$el
 
 # List of HTML5 tags
 Gunther.html5Tags = ["a", "abbr", "address", "area", "article", "aside", "audio", "b",

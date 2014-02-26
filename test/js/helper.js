@@ -27,4 +27,14 @@
     return wrapper;
   };
 
+  window.renderGuntherView = function() {
+    var args, view, wrapper;
+    view = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    wrapper = $('<div class="gunther-output"></div>');
+    ($('body')).append(wrapper);
+    view.setElement(wrapper);
+    view.render.apply(view, [wrapper].concat(args));
+    return wrapper;
+  };
+
 }).call(this);

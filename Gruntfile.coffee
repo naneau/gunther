@@ -12,6 +12,7 @@ module.exports = (grunt) ->
     'src/template/element.coffee',
     'src/template/list.coffee',
     'src/template/partial.coffee',
+    'src/template/property.coffee',
     'src/template/text.coffee',
 
     'src/view.coffee',
