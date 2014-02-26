@@ -1,20 +1,5 @@
 # Set up the global "namespace" for Gunther to live in
-Gunther = {
-  # Partial renderers
-  partials: {}
-
-  # Add a partial
-  addPartial: (key, partial) ->
-
-    # Set it up as a partial
-    Gunther.partials[key] = partial
-
-    # Register as a method on root
-    throw new Error "Partial \"#{key}\" already exists" if Gunther.Template::[key]?
-
-    # Register on template
-    Gunther.Template::[key] = (args...) -> @partial.apply this, [key].concat args
-}
+Gunther = {}
 
 # Export through CommonJS if we have a require function
 # This is a tad hacky for now
@@ -215,8 +200,6 @@ class Gunther.Template
   # additional DOM parsers, can be used to set up plugins, etc.
   @domParsers = []
 
-  # Remove a partial
-  @removePartial = (key) -> delete Gunther.Template.partials.key
 
   # Value for an element whereby both a function and a direct value can be passed
   # scope is optional
@@ -544,16 +527,6 @@ class Gunther.Template
   # Render a sub-template
   subTemplate: (template, args...) -> template.renderInto @current, args...
 
-  # Render a registered partial
-  partial: (key, args...) ->
-
-    # Sanity check
-    throw new Error "Partial \"#{key}\" does not exist" if not Gunther.partials[key]?
-
-    template = new Gunther.Template Gunther.partials[key]
-
-    @subTemplate.apply this, [template].concat args
-
   # Bind an attribute or property to a property of a model
   bind: (args...) -> new BoundProperty args...
 
@@ -581,8 +554,6 @@ class Gunther.Template
   # Shorthand for class
   class: (className) -> @attribute 'class', className
 
-  # Partial
-  p: (args...) -> @partial.apply this, args
 
 # Switched views
 #
@@ -676,8 +647,19 @@ Gunther.SwitchedView = SwitchedView
 # Set up a subview for every item in the collection
 Gunther.Template::itemSubView = (options, generator = null) -> new ItemSubView options, generator
 
-# Create a list
-Gunther.Template::list = (element, options, generator = null) -> @element element, -> new ItemSubView options, generator
+# Async list
+Gunther.Template::asyncList = (element, options, generator = null) ->
+
+  if options instanceof Backbone.Collection
+    model = options
+
+    options =
+      model: model
+      generator: generator
+
+  options.sync = false
+
+  @element element, -> new ItemSubView options
 
 # Create a sync list, that does not wait for animation frames
 Gunther.Template::syncList = (element, options, generator = null) ->
@@ -692,6 +674,9 @@ Gunther.Template::syncList = (element, options, generator = null) ->
   options.sync = true
 
   @element element, -> new ItemSubView options
+
+# Create a list
+Gunther.Template::list = Gunther.Template::syncList
 
 # Subview for items
 #
@@ -928,3 +913,34 @@ class ItemSubView extends Backbone.View
 
     # Switch semaphore
     @_checkingQueue = false
+
+# Partials
+Gunther.partials = {}
+
+# Add a partial
+Gunther.addPartial = (key, partial) ->
+
+  # Set it up as a partial
+  Gunther.partials[key] = partial
+
+  # Register as a method on root
+  throw new Error "Partial \"#{key}\" already exists" if Gunther.Template::[key]?
+
+  # Register on template
+  Gunther.Template::[key] = (args...) -> @partial.apply this, [key].concat args
+
+# Remove a partial
+Gunther.removePartial = (key) -> delete Gunther.partials.key
+
+# Render a registered partial
+Gunther.Template::partial = (key, args...) ->
+
+  # Sanity check
+  throw new Error "Partial \"#{key}\" does not exist" if not Gunther.partials[key]?
+
+  template = new Gunther.Template Gunther.partials[key]
+
+  @subTemplate.apply this, [template].concat args
+
+# Partial
+Gunther.Template::p = (args...) -> @partial.apply this, args

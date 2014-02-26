@@ -1,8 +1,8 @@
 # Set up a subview for every item in the collection
 Gunther.Template::itemSubView = (options, generator = null) -> new ItemSubView options, generator
 
-
-Gunther.Template::asyncList = (element, options, generator = null) -> @element element, -> new ItemSubView options, generator
+# Async list
+Gunther.Template::asyncList = (element, options, generator = null) ->
 
   if options instanceof Backbone.Collection
     model = options
