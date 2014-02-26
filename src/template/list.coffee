@@ -79,31 +79,13 @@ class ItemSubView extends Backbone.View
     @key = "_subview-#{ItemSubView.generator.generate()}"
     @elementKey = "element-#{@key}"
 
-    # Prepend instead of append elements?
-    @prepend = if options.prepend? then options.prepend else false
-
-    # View/Template generator
-    @generator = options.generator
-
-    # Events hash
-    @events = _.extend ItemSubView.defaultEvents, (if options.events? then options.events else {})
-
-    # DOM element remover
-    @remove = if options.remove? then options.remove else ItemSubView.remove
-
-    # Odd/Even classes
-    @evenClass = if options.evenClass? then options.evenClass
-    @oddClass = if options.oddClass? then options.oddClass
-
     # Hash of items that have been rendered
     @renderedItems = {}
 
-    # Sync operation?
-    @sync = if options.sync? then options.sync else false
+    # Parse the options
+    @_parseOptions options
 
-    # Alias for "collection"
-    @model = if options.collection? then options.collection else @model
-
+    # Initialize the events
     do @_initEvents
 
   # Overloaded setElement() because of lack of @$el in init
@@ -117,6 +99,37 @@ class ItemSubView extends Backbone.View
 
     # Render the items already in the collection
     @model.each (item) => @_renderItem item
+
+  # Parse the options
+  _parseOptions: (options) ->
+
+    # Prepend instead of append elements?
+    @prepend = if options.prepend? then options.prepend else false
+
+    # View/Template generator
+    if typeof options.generator is 'function'
+      @generator = new Gunther.Template options.generator
+    else
+      @generator = options.generator
+
+    # Guard generator
+    throw new Error "No generator passed" if @generator not instanceof Gunther.Template
+
+    # Events hash
+    @events = _.extend ItemSubView.defaultEvents, (if options.events? then options.events else {})
+
+    # DOM element remover
+    @remove = if options.remove? then options.remove else ItemSubView.remove
+
+    # Odd/Even classes
+    @evenClass = if options.evenClass? then options.evenClass
+    @oddClass = if options.oddClass? then options.oddClass
+
+    # Sync operation?
+    @sync = if options.sync? then options.sync else false
+
+    # Alias for "collection"
+    @model = if options.collection? then options.collection else @model
 
   # Initialize the event listeners
   _initEvents: () ->
