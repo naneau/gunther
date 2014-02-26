@@ -1,10 +1,10 @@
-# Switched views
+# Public: Add a switched view
 #
-# Set up a switched view
-#@switchView 'div.switched', state, 'toggle', ->
-  #@keep templateKeep, state, (toggle) -> toggle
-  #@switch templateSwitch, state, (toggle) -> not toggle
-  #
+# Examples
+#
+#  @switchView 'div.switched', state, 'toggle', ->
+#    @keep templateKeep, state, (toggle) -> toggle
+#    @switch templateSwitch, state, (toggle) -> not toggle
 Gunther.Template::switchView = (element, model, properties, generator) ->
   @element element, ->
     return new SwitchedView @current, model, properties, generator

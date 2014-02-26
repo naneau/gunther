@@ -7,12 +7,12 @@ module.exports = (grunt) ->
     'src/boundProperty.coffee',
     'src/boundModel.coffee',
     'src/template.coffee',
-    'src/switchView.coffee',
 
     'src/template/element.coffee',
     'src/template/list.coffee',
     'src/template/partial.coffee',
     'src/template/property.coffee',
+    'src/template/switch.coffee',
     'src/template/text.coffee',
 
     'src/view.coffee',
