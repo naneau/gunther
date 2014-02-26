@@ -116,110 +116,102 @@
       </nav>
       <div id='filecontents'>
         <h1 id="gunther">Gunther</h1><p><a href="http://naneau.net/gunther"><a href="http://naneau.net/gunther">http://naneau.net/gunther</a></a></p><p><a href="https://travis-ci.org/naneau/gunther"><img src="https://travis-ci.org/naneau/gunther.png?branch=master" alt="Build Status"></a></p><h2 id="introduction">Introduction</h2><p>Gunther is a view and templating tool for
-<a href="http://backbonejs.org/">Backbone</a>. Its goal is to provide a powerful and
-flexible way to create views, based on Backbone Models and Collections,
-supporting live bindings and expressive syntax.</p><p>Gunther&#39;s templates are never compiled or interpreted. The templates are &quot;live&quot;
-functions, that retain their parent scope. Because they are code based, not
-string based, they are easily maintained with the rest of application code.</p><h3 id="concise">Concise</h3><p>Template are short, to the point, and easy to read. Gunther is written to make
-maximum use <a href="http://coffeescript.org/">CoffeeScript&#39;s</a> notation, combined with
-CSS inspired element creation.</p><pre><code class="lang-coffeescript">template = new Gunther.Template (backboneModel) -&gt;
+<a href="http://backbonejs.org/">Backbone</a>. Its provides a powerful and flexible way to
+create views, based on Backbone Models and Collections, supporting live
+bindings and expressive syntax.</p><p>Gunther&#39;s templates are never compiled or interpreted. The templates are &quot;live&quot;
+functions, that retain their parent scope. Because they are based in code, not
+interpreted strings, they are easily maintained with the rest of application
+code.</p><h3 id="concise">Concise</h3><p>The templates are based on a simple DSL. Gunther is written to make maximum use
+<a href="http://coffeescript.org/">CoffeeScript&#39;s</a> notation, combined with CSS inspired
+element creation.</p><pre><code class="lang-coffeescript">
+template = new Gunther.Template -&gt;
 
-    # Elements are added using the @element method
-    @element &#39;p&#39;, &#39;This is some text&#39;
+  # Elements are created using a simple DSL
+  @div -&gt;
+      @p &#39;This is some text&#39;
+      @p &#39;This is some more text&#39;
 
-    # The @element method accepts ID&#39;s, classes, attributes and properties in
-    # a CSS-like syntax
-    @element &#39;p#has-an-id&#39;
-    @element &#39;p.has-a-class&#39;
-    @element &#39;input[type=checkbox]:checked&#39;
+  # For more fine-grained creation, you can use @element()
+  # This method accepts ID&#39;s, classes, attributes and properties in a
+  # CSS-like syntax
+  @element &#39;p#has-an-id&#39;
+  @element &#39;p.has-a-class&#39;
+  @element &#39;input[type=checkbox]:checked&#39;
 
-    # IDs, classes, attributes, and properties can be chained
-    @element &#39;input[type=text]#foo.bar.baz:checked&#39;
+  # IDs, classes, attributes, and properties can be chained
+  @element &#39;input[type=checkbox]#foo.bar.baz:checked&#39;
 
-    # Children are added functionally
-    @element &#39;p&#39;, -&gt;
-        @element &#39;a[href=linked.html]&#39;, -&gt; &#39;This is a link&#39;
-        @element &#39;span&#39;, -&gt; &#39;And this is some text in a span&#39;
+  # Content can be expressed functionally
+  @text -&gt; &quot;I can count to 10! #{implode &#39;,&#39; [1..10]}&quot;
 
-    # All content can be expressed as functions
-    @text -&gt; &quot;I can count to 10! #{implode &#39;,&#39; [1..10]}&quot;
-
-    # Events can be handled inline, without losing scope
-    @on &#39;click&#39;, (e) -&gt; backboneModel.set foo: &#39;bar&#39;
+  # Events can be handled inline, without losing scope
+  @on &#39;click&#39;, (e) -&gt; someModel.set foo: &#39;bar&#39;
 </code></pre>
 <h3 id="live-bindings">Live Bindings</h3><p>Gunther can bind any model attribute to DOM elements, classes, attributes and
-properties, allowing for live updating views.</p><pre><code class="lang-coffeescript">template = new Gunther.Template (backboneModel) -&gt;
+properties, allowing for live updating views.</p><pre><code class="lang-coffeescript">template = new Gunther.Template (model) -&gt;
+  @div, -&gt;
+    # Toggle a class depending on a model&#39;s attribute
+    @toggleClass &#39;foo&#39;, model, &#39;foo&#39;
 
-    @element &#39;p&#39;, -&gt;
+    # Toggle a class using a generator
+    @toggleClass &#39;bar&#39;, model, &#39;bar&#39;, () -&gt; (model.get &#39;bar&#39;) is &#39;bar&#39;
 
-        # Toggle a class depending on a model&#39;s attribute
-        @toggleClass &#39;foo&#39;, backboneModel, &#39;foo&#39;
+    # Bind text to a model&#39;s attribute
+    @boundText model, &#39;foo&#39;
 
-        # Toggle a class using a generator
-        @toggleClass &#39;bar&#39;, backboneModel, &#39;bar&#39;, () -&gt; (backboneModel.get &#39;bar&#39;) is &#39;bar&#39;
+    # Bind DOM attributes to a model
+    @boundAttribute &#39;src&#39; model, &#39;source&#39;
 
-        # Bind text to a model&#39;s attribute
-        @boundText backboneModel, &#39;foo&#39;
+    # Bind DOM properties to a model
+    @boundProperty &#39;checked&#39; model, &#39;selected&#39;
 
-        # Bind DOM attributes to a model
-        @boundAttribute &#39;src&#39; backboneModel, &#39;source&#39;
-
-        # Bind DOM properties to a model
-        @boundProperty &#39;checked&#39; backboneModel, &#39;selected&#39;
-
-        # Change a style property with a model&#39;s attribute
-        @boundCss &#39;color&#39;, backboneModel, &#39;foo&#39;, () -&gt;
-            if (backboneModel.get &#39;foo&#39;) is &#39;foo&#39; then &#39;#FF0000&#39; else &#39;#0000FF&#39;
+    # Change a style property with a model&#39;s attribute
+    @boundCss &#39;color&#39;, model, &#39;foo&#39;, () -&gt;
+      if (model.get &#39;foo&#39;) is &#39;foo&#39; then &#39;#FF0000&#39; else &#39;#0000FF&#39;
 </code></pre>
 <h3 id="list-views">List views</h3><p>List views allow you to set up repeated views for items from a collection. The
-list is automatically pruned and sorted when the underlying collection is.</p><pre><code class="lang-coffeescript">template = new Gunther.Tempalte (collection) -&gt;
-    @list &#39;ul&#39;, collection, new Gunther.Template (item) -&gt;
-        @element &#39;li&#39;, -&gt; item.get &#39;foo&#39;
+list is automatically pruned and sorted when the underlying collection is
+modified.</p><pre><code class="lang-coffeescript">template = new Gunther.Template (collection) -&gt;
+  @list &#39;ul&#39;, collection, (item) -&gt;
+    @li item.get &#39;foo&#39;
 </code></pre>
 <h3 id="extensibility">Extensibility</h3><p>Gunther supports partials, so it&#39;s easy to create re-usable components.
 Templates can also be composed out of sub-templates.</p><pre><code class="lang-coffeescript">
-# A &quot;fancy&quot; paragraph partial
-Gunther.addPartial &#39;fancyParagraph&#39;, (text) -&gt;
-    @element &#39;p.fancy&#39;, -&gt; text
-
 # A button partial, complete with handler
 Gunther.addPartial &#39;button&#39;, (text, handler) -&gt;
-    @element &#39;button&#39;, -&gt;
-        @text text
-        @on &#39;click&#39;, handler
+  @a -&gt;
+    @text text
+    @on &#39;click&#39;, handler
 
-template = new Gunther.Template (backboneCollection) -&gt;
+template = new Gunther.Template -&gt;
 
-    # Fancy paragraph
-    @fancyParagraph &#39;this is the text for the paragraph&#39;
+  # Button
+  @button &#39;Click me!&#39;, () -&gt; alert &#39;I was clicked!&#39;
 
-    # Button
-    @button &#39;Click me!&#39;, () -&gt; alert &#39;I was clicked!&#39;
-
-    # Render another template inside this one
-    @subTemplate someOtherTemplate
+  # Render another template inside this one
+  @subTemplate someOtherTemplate
 </code></pre>
 <h2 id="rendering">Rendering</h2><p>Rendering a template is easy:</p><pre><code class="lang-coffeescript">
 template = new Gunther.Template -&gt;
-    @element &#39;div&#39;, &#39;This is text from a Gunther template&#39;
+  @div &#39;This is text from a Gunther template&#39;
 
 template.renderInto $ &#39;#your-element&#39;
 </code></pre><p>Gunther&#39;s templates integrate easily with Backbone&#39;s views:</p><pre><code class="lang-coffeescript">
 class FooView extends Backbone.View
 
-    # The view&#39;s template
-    @template: new Gunther.Template (model) -&gt;
-        @element &#39;div&#39;, -&gt; model.get &#39;foo&#39;
+  # The view&#39;s template
+  @template: new Gunther.Template (model) -&gt;
+    @element &#39;div&#39;, -&gt; model.get &#39;foo&#39;
 
-    # Use the render method to render the template into the view&#39;s element
-    render: -&gt; FooView.template.renderInto @$el, @model
+  # Use the render method to render the template into the view&#39;s element
+  render: -&gt; FooView.template.renderInto @$el, @model
 </code></pre>
 
       </div>
     </div>
     <div id='footer'>
   Generated on
-  Wed Feb 26 2014 16:01:51 GMT-0500 (EST)
+  Wed Feb 26 2014 16:59:33 GMT-0500 (EST)
   by
   <a href='https://github.com/gjtorikian/biscotto' title='TomDoc-CoffeeScript API documentation generator'>Biscotto</a>
   v2.1.1
