@@ -1,12 +1,16 @@
 (function() {
-  test('Attributes', function() {
+  ({
+    module: 'Attributes'
+  });
+
+  test('Simple', function() {
     var elem;
     elem = singleElement('div', 'div[foo=bar]');
     equal(elem.attr('foo'), 'bar', 'Attributes should be set');
     return equal(elem.contents().length, 0, 'There should not be content in an empty node');
   });
 
-  test('Bound attributes', function() {
+  test('Bound', function() {
     var elem, model;
     model = new Backbone.Model;
     model.set('foo', 'bar');

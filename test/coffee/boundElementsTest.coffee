@@ -1,5 +1,7 @@
+module: 'Bound Elements'
+
 # Elements rendering, core
-test 'Bound elements', ->
+test 'Binding', ->
 
   model = new Backbone.Model
     class: 'foo'

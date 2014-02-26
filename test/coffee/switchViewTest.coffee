@@ -1,4 +1,5 @@
 module 'Switch Views'
+
 test 'Switching', ->
 
   # Kept template

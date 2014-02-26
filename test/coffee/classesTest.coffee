@@ -1,4 +1,6 @@
-test 'Classes', ->
+module: 'Classes'
+
+test 'Initializing', ->
 
   elem = singleElement 'div', 'div.foo'
   equal (elem.hasClass 'foo'), true, 'Single class should be added'
@@ -14,7 +16,7 @@ test 'Classes', ->
   equal (elem.hasClass 'foo'), false, 'Class can be overwritten'
   equal (elem.hasClass 'bar'), true, 'Class can be overwritten'
 
-test 'Classes, toggle', ->
+test 'Toggling', ->
 
   model = new Backbone.Model bar: true
   elem = singleElement 'div', -> @element 'div.foo', -> @toggleClass 'bar', model, 'bar'

@@ -1,5 +1,7 @@
 (function() {
-  test('Elements', function() {
+  module('Elements');
+
+  test('Rendering', function() {
     var elem, wrapper;
     elem = singleElement('div', 'div');
     equal(elem[0].tagName, 'DIV', 'Element should render as correct type');
@@ -26,7 +28,7 @@
     return equal(wrapper.children()[2].tagName, 'DIV', 'Element should render as correct type');
   });
 
-  test('Elements, children', function() {
+  test('Children', function() {
     var elem;
     elem = singleElement('div', function() {
       return this.element('div', function() {
@@ -46,7 +48,7 @@
     return equal(elem.contents()[4].tagName, 'DIV', 'Children should be of correct type');
   });
 
-  test('Elements, children of children', function() {
+  test('Children of children', function() {
     var elem;
     elem = singleElement('div', function() {
       return this.element('div', function() {

@@ -1,5 +1,7 @@
+module 'Elements'
+
 # Elements rendering, core
-test 'Elements', ->
+test 'Rendering', ->
 
   elem = singleElement 'div', 'div'
   equal elem[0].tagName, 'DIV', 'Element should render as correct type'
@@ -25,7 +27,7 @@ test 'Elements', ->
   equal wrapper.children()[1].tagName, 'DIV', 'Element should render as correct type'
   equal wrapper.children()[2].tagName, 'DIV', 'Element should render as correct type'
 
-test 'Elements, children', ->
+test 'Children', ->
   elem = singleElement 'div', ->
     @element 'div', ->
       @element 'div'
@@ -42,7 +44,7 @@ test 'Elements, children', ->
   equal elem.contents()[3].nodeValue, 'foo', 'Text should render next to children'
   equal elem.contents()[4].tagName, 'DIV', 'Children should be of correct type'
 
-test 'Elements, children of children', ->
+test 'Children of children', ->
   elem = singleElement 'div', ->
     @element 'div', ->
       @element 'section', ->

@@ -1,5 +1,9 @@
 (function() {
-  test('Bound elements', function() {
+  ({
+    module: 'Bound Elements'
+  });
+
+  test('Binding', function() {
     var boundElement, elem, model, template, wrapper;
     model = new Backbone.Model({
       "class": 'foo'

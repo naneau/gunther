@@ -1,11 +1,13 @@
-test 'Attributes', ->
+module: 'Attributes'
+
+test 'Simple', ->
 
   elem = singleElement 'div', 'div[foo=bar]'
 
   equal (elem.attr 'foo'), 'bar', 'Attributes should be set'
   equal elem.contents().length, 0, 'There should not be content in an empty node'
 
-test 'Bound attributes', ->
+test 'Bound', ->
 
   model = new Backbone.Model
   model.set 'foo', 'bar'

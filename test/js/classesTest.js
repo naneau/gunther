@@ -1,5 +1,9 @@
 (function() {
-  test('Classes', function() {
+  ({
+    module: 'Classes'
+  });
+
+  test('Initializing', function() {
     var elem;
     elem = singleElement('div', 'div.foo');
     equal(elem.hasClass('foo'), true, 'Single class should be added');
@@ -18,7 +22,7 @@
     return equal(elem.hasClass('bar'), true, 'Class can be overwritten');
   });
 
-  test('Classes, toggle', function() {
+  test('Toggling', function() {
     var elem, model;
     model = new Backbone.Model({
       bar: true

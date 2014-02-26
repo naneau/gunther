@@ -1,4 +1,6 @@
-test 'Properties', ->
+module 'Properties'
+
+test 'Rendering', ->
 
   elem = singleElement 'input', 'input[type=checkbox]:checked'
   equal (elem.prop 'checked'), true, 'Properties should be set from description'
@@ -11,7 +13,7 @@ test 'Properties', ->
     @property 'checked', false
   equal (elem.prop 'checked'), false, 'Properties should be set from @property'
 
-test 'Properties, bound', ->
+test 'Binding', ->
 
   model = new Backbone.Model foo: false
 

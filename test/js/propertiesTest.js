@@ -1,5 +1,7 @@
 (function() {
-  test('Properties', function() {
+  module('Properties');
+
+  test('Rendering', function() {
     var elem;
     elem = singleElement('input', 'input[type=checkbox]:checked');
     equal(elem.prop('checked'), true, 'Properties should be set from description');
@@ -17,7 +19,7 @@
     return equal(elem.prop('checked'), false, 'Properties should be set from @property');
   });
 
-  test('Properties, bound', function() {
+  test('Binding', function() {
     var elem, model;
     model = new Backbone.Model({
       foo: false
