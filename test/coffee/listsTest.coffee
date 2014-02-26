@@ -71,6 +71,45 @@ asyncTest 'Adding And Removing Items, repeat', -> addAndRemoveTest false
 asyncTest 'Adding And Removing Items, sync', -> addAndRemoveTest true
 asyncTest 'Adding And Removing Items, sync, repeat', -> addAndRemoveTest true
 
+asyncTest 'Simplified syntax', ->
+  expect 5
+
+  # Simple collection
+  collection = new Backbone.Collection
+
+  # Render the template
+  elem = singleElement 'div.list', collection, ->
+      @list 'div.list', collection, (item) -> @element "div.item.#{item.get 'foo'}"
+
+  # Start with no items
+  equal elem.children().length, 0, 'List should initialize when empty'
+
+  tests = []
+  tests.push ->
+    collection.add foo: 'bar', bar: 'baz1'
+  tests.push ->
+    equal (elem.find 'div.bar').length, 1, 'List should add a single item'
+
+  tests.push ->
+    collection.add foo: 'bar', bar: 'baz2'
+    collection.add foo: 'bar', bar: 'baz1'
+    collection.add foo: 'bar', bar: 'baz2'
+    collection.add foo: 'bar', bar: 'baz1'
+  tests.push ->
+    equal elem.find('div.bar').length, 5, 'List should add multiple items'
+
+  tests.push ->
+    collection.remove collection.first()
+  tests.push ->
+    equal elem.find('div.bar').length, 4, 'list should remove a single item'
+
+  tests.push ->
+    collection.remove collection.where bar: 'baz1'
+  tests.push ->
+    equal elem.find('div.bar').length, 2, 'list should remove multiple items'
+
+  runTests tests, false
+
 asyncTest 'Lists, non empty', ->
 
   expect 5

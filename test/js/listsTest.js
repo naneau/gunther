@@ -104,6 +104,64 @@
     return addAndRemoveTest(true);
   });
 
+  asyncTest('Simplified syntax', function() {
+    var collection, elem, tests;
+    expect(5);
+    collection = new Backbone.Collection;
+    elem = singleElement('div.list', collection, function() {
+      return this.list('div.list', collection, function(item) {
+        return this.element("div.item." + (item.get('foo')));
+      });
+    });
+    equal(elem.children().length, 0, 'List should initialize when empty');
+    tests = [];
+    tests.push(function() {
+      return collection.add({
+        foo: 'bar',
+        bar: 'baz1'
+      });
+    });
+    tests.push(function() {
+      return equal((elem.find('div.bar')).length, 1, 'List should add a single item');
+    });
+    tests.push(function() {
+      collection.add({
+        foo: 'bar',
+        bar: 'baz2'
+      });
+      collection.add({
+        foo: 'bar',
+        bar: 'baz1'
+      });
+      collection.add({
+        foo: 'bar',
+        bar: 'baz2'
+      });
+      return collection.add({
+        foo: 'bar',
+        bar: 'baz1'
+      });
+    });
+    tests.push(function() {
+      return equal(elem.find('div.bar').length, 5, 'List should add multiple items');
+    });
+    tests.push(function() {
+      return collection.remove(collection.first());
+    });
+    tests.push(function() {
+      return equal(elem.find('div.bar').length, 4, 'list should remove a single item');
+    });
+    tests.push(function() {
+      return collection.remove(collection.where({
+        bar: 'baz1'
+      }));
+    });
+    tests.push(function() {
+      return equal(elem.find('div.bar').length, 2, 'list should remove multiple items');
+    });
+    return runTests(tests, false);
+  });
+
   asyncTest('Lists, non empty', function() {
     var collection, elem, index, tests, _i;
     expect(5);
