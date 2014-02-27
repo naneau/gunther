@@ -517,7 +517,7 @@ class ItemSubView extends Backbone.View
     items = (item[elementKey].detach() for item in collection.toArray())
 
     # Append again from the top
-    parentElement.appendChild item for item in items
+    parentElement.append item for item in items
 
   # Constructor
   initialize: (options, generator) ->
