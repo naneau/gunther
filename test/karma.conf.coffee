@@ -13,7 +13,7 @@ module.exports = (config) ->
     # list of files / patterns to load in the browser
     files: [
       'bower_components/qunit/qunit/qunit.js',
-      'bower_components/jquery/jquery.js',
+      'bower_components/jquery/dist/jquery.js',
       'bower_components/underscore/underscore.js',
       'bower_components/backbone/backbone.js',
       '../lib/gunther.js',
